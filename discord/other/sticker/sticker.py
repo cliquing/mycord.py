@@ -26,9 +26,9 @@ from __future__ import annotations
 from typing import Literal, TYPE_CHECKING, List, Optional, Tuple, Type, Union
 import unicodedata
 
-from .mixins import Hashable
-from .asset import Asset, AssetMixin
-from .utils import cached_slot_property, snowflake_time, get, MISSING, _get_as_snowflake
+from ...mixins import Hashable
+from ...entity.asset import Asset, AssetMixin
+from ...utils import cached_slot_property, snowflake_time, get, MISSING, _get_as_snowflake
 from .enums import StickerType, StickerFormatType, try_enum
 
 __all__ = (
@@ -41,10 +41,10 @@ __all__ = (
 
 if TYPE_CHECKING:
     import datetime
-    from .state import ConnectionState
-    from .user import User
-    from .guild import Guild
-    from .types.sticker import (
+    from ...core.state.state import ConnectionState
+    from ...core.user.user import User
+    from ...core.guild.guild import Guild
+    from .types import (
         StickerPack as StickerPackPayload,
         StickerItem as StickerItemPayload,
         Sticker as StickerPayload,

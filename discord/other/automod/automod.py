@@ -28,18 +28,18 @@ import datetime
 from typing import TYPE_CHECKING, Any, Dict, Optional, List, Set, Union, Sequence, overload, Literal
 
 from .enums import AutoModRuleTriggerType, AutoModRuleActionType, AutoModRuleEventType, try_enum
-from .flags import AutoModPresets
-from . import utils
-from .utils import MISSING, cached_slot_property
+from ...flags import AutoModPresets
+from ... import utils
+from ...utils import MISSING, cached_slot_property
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from .abc import Snowflake, GuildChannel
-    from .threads import Thread
-    from .guild import Guild
-    from .member import Member
-    from .state import ConnectionState
-    from .types.automod import (
+    from ...abc import Snowflake, GuildChannel
+    from ..threads.threads import Thread
+    from ...core.guild.guild import Guild
+    from ...core.member.member import Member
+    from ...core.state.state import ConnectionState
+    from .types import (
         AutoModerationRule as AutoModerationRulePayload,
         AutoModerationTriggerMetadata as AutoModerationTriggerMetadataPayload,
         AutoModerationAction as AutoModerationActionPayload,

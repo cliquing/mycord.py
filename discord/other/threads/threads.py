@@ -28,13 +28,13 @@ from typing import Callable, Dict, Iterable, List, Literal, Optional, Sequence, 
 from datetime import datetime
 import array
 
-from .mixins import Hashable
-from .abc import Messageable, GuildChannel, _purge_helper
+from ...mixins import Hashable
+from ...abc import Messageable, GuildChannel, _purge_helper
 from .enums import ChannelType, try_enum
-from .errors import ClientException
-from .flags import ChannelFlags
-from .permissions import Permissions
-from .utils import MISSING, parse_time, _get_as_snowflake, _unique
+from ...errors import ClientException
+from ...flags import ChannelFlags
+from ...entity.permissions import Permissions
+from ...utils import MISSING, parse_time, _get_as_snowflake, _unique
 
 __all__ = (
     'Thread',
@@ -44,20 +44,20 @@ __all__ = (
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .types.threads import (
+    from ...types.threads import (
         Thread as ThreadPayload,
         ThreadMember as ThreadMemberPayload,
         ThreadMetadata,
         ThreadArchiveDuration,
     )
-    from .types.snowflake import SnowflakeList
-    from .guild import Guild
-    from .channel import TextChannel, CategoryChannel, ForumChannel, ForumTag
-    from .member import Member
-    from .message import Message, PartialMessage
-    from .abc import Snowflake, SnowflakeTime
+    from ...types.snowflake import SnowflakeList
+    from ...core.guild.guild import Guild
+    from ...channel import TextChannel, CategoryChannel, ForumChannel, ForumTag
+    from ...core.member.member import Member
+    from ...core.message.message import Message, PartialMessage
+    from ...abc import Snowflake, SnowflakeTime
     from .role import Role
-    from .state import ConnectionState
+    from ...core.state.state import ConnectionState
 
     ThreadChannelType = Literal[ChannelType.news_thread, ChannelType.public_thread, ChannelType.private_thread]
 
@@ -893,7 +893,7 @@ class Thread(Messageable, Hashable):
             The partial message.
         """
 
-        from .message import PartialMessage
+        from ...core.message.message import PartialMessage
 
         return PartialMessage(channel=self, id=message_id)
 

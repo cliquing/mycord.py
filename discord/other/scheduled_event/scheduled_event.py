@@ -27,24 +27,24 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, AsyncIterator, Dict, Optional, Union, overload, Literal
 
-from .asset import Asset
+from ...asset import Asset
 from .enums import EventStatus, EntityType, PrivacyLevel, try_enum
-from .mixins import Hashable
-from .object import Object, OLDEST_OBJECT
-from .utils import parse_time, _get_as_snowflake, _bytes_to_base64_data, MISSING
+from ...mixins import Hashable
+from ...object import Object, OLDEST_OBJECT
+from ...utils import parse_time, _get_as_snowflake, _bytes_to_base64_data, MISSING
 
 if TYPE_CHECKING:
-    from .types.scheduled_event import (
+    from .types import (
         GuildScheduledEvent as BaseGuildScheduledEventPayload,
         GuildScheduledEventWithUserCount as GuildScheduledEventWithUserCountPayload,
         EntityMetadata,
     )
 
-    from .abc import Snowflake
-    from .guild import Guild
-    from .channel import VoiceChannel, StageChannel
-    from .state import ConnectionState
-    from .user import User
+    from ...abc import Snowflake
+    from ...core.guild.guild import Guild
+    from ...channel import VoiceChannel, StageChannel
+    from ...core.state.state import ConnectionState
+    from ...core.user.user import User
 
     GuildScheduledEventPayload = Union[BaseGuildScheduledEventPayload, GuildScheduledEventWithUserCountPayload]
 

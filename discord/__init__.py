@@ -20,58 +20,59 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 import logging
 from typing import NamedTuple, Literal
 
-from .client import *
-from .appinfo import *
-from .user import *
-from .emoji import *
-from .partial_emoji import *
-from .activity import *
+from .other import opus as opus
+
+from .core.client.client import *
+from .other.appinfo.appinfo import *
+from .core.user.user import *
+from .core.emoji.emoji import *
+from .core.emoji.partial_emoji import *
+from .core.activity.activity import *
 from .channel import *
-from .guild import *
+from .core.guild.guild import *
 from .flags import *
-from .member import *
-from .message import *
-from .asset import *
+from .core.member.member import *
+from .core.message.message import *
+from .entity.asset import *
 from .errors import *
-from .permissions import *
-from .role import *
-from .file import *
-from .colour import *
-from .integrations import *
-from .invite import *
-from .template import *
-from .welcome_screen import *
-from .sku import *
-from .widget import *
+from .entity.permissions import *
+from .core.role import *
+from .entity.file import *
+from .entity.colour import *
+from .other.integration.integrations import *
+from .core.invite.invite import *
+from .other.template.template import *
+from .other.welcome_screen.welcome_screen import *
+from .other.sku.sku import *
+from .other.widget.widget import *
 from .object import *
-from .reaction import *
+from .core.reaction.reaction import *
 from . import (
     utils as utils,
-    opus as opus,
     abc as abc,
     ui as ui,
     app_commands as app_commands,
 )
 from .enums import *
-from .embeds import *
-from .mentions import *
+from .core.embeds.embeds import *
+from .core.message.mentions import *
 from .shard import *
 from .player import *
-from .webhook import *
-from .voice_client import *
-from .audit_logs import *
+from .core.webhook import *
+from .core.client.voice import *
+from .other.audit_logs.audit_logs import *
 from .raw_models import *
 from .team import *
-from .sticker import *
+from .other.sticker.sticker import *
 from .stage_instance import *
-from .scheduled_event import *
-from .interactions import *
+from .other.scheduled_event.scheduled_event import *
+from .core.interaction.interactions import *
 from .components import *
-from .threads import *
-from .automod import *
-from .poll import *
-from .soundboard import *
-from .subscription import *
+from .other.threads.threads import *
+from .other.automod.automod import *
+from .other.poll.poll import *
+from .other.soundboard.soundboard import *
+from .other.subscription.subscription import *
 from .presences import *
 
 

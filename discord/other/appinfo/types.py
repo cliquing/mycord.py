@@ -89,3 +89,22 @@ class GatewayAppInfo(TypedDict):
 
 class ListAppEmojis(TypedDict):
     items: List[Emoji]
+
+
+
+
+
+class TeamMember(TypedDict):
+    user: PartialUser
+    membership_state: int
+    permissions: List[str]
+    team_id: Snowflake
+    role: Literal['admin', 'developer', 'read_only']
+
+
+class Team(TypedDict):
+    id: Snowflake
+    name: str
+    owner_id: Snowflake
+    members: List[TeamMember]
+    icon: Optional[str]

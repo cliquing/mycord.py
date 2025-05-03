@@ -26,25 +26,25 @@ from __future__ import annotations
 
 from typing import List, TYPE_CHECKING, Literal, Optional
 
-from . import utils
-from .asset import Asset
-from .flags import ApplicationFlags
-from .permissions import Permissions
-from .utils import MISSING
+from ... import utils
+from ...entity.asset import Asset
+from ...flags import ApplicationFlags
+from ...entity.permissions import Permissions
+from ...utils import MISSING
 
 if TYPE_CHECKING:
     from typing import Dict, Any
 
-    from .guild import Guild
-    from .types.appinfo import (
+    from ...core.guild.guild import Guild
+    from .types import (
         AppInfo as AppInfoPayload,
         PartialAppInfo as PartialAppInfoPayload,
         Team as TeamPayload,
         InstallParams as InstallParamsPayload,
         AppIntegrationTypeConfig as AppIntegrationTypeConfigPayload,
     )
-    from .user import User
-    from .state import ConnectionState
+    from ...core.user.user import User
+    from ...core.state.state import ConnectionState
 
 __all__ = (
     'AppInfo',

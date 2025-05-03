@@ -24,17 +24,17 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from . import utils
-from .user import BaseUser
-from .asset import Asset
+from ... import utils
+from ...core.user.user import BaseUser
+from ...entity.asset import Asset
 from .enums import TeamMemberRole, TeamMembershipState, try_enum
 
 from typing import TYPE_CHECKING, Optional, List
 
 if TYPE_CHECKING:
-    from .state import ConnectionState
+    from ...core.state.state import ConnectionState
 
-    from .types.team import (
+    from .types import (
         Team as TeamPayload,
         TeamMember as TeamMemberPayload,
     )
