@@ -27,11 +27,11 @@ from __future__ import annotations
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union, overload
 
-from .asset import Asset
-from .enums import ActivityType, try_enum
-from .colour import Colour
-from .partial_emoji import PartialEmoji
-from .utils import _get_as_snowflake
+from ...asset import Asset
+from ..enums import ActivityType, try_enum
+from ...colour import Colour
+from ...partial_emoji import PartialEmoji
+from ...utils import _get_as_snowflake
 
 __all__ = (
     'BaseActivity',
@@ -89,14 +89,14 @@ t.ActivityFlags = {
 """
 
 if TYPE_CHECKING:
-    from .types.activity import (
+    from ...types.activity import (
         Activity as ActivityPayload,
         ActivityTimestamps,
         ActivityParty,
         ActivityAssets,
     )
 
-    from .state import ConnectionState
+    from ...state import ConnectionState
 
 
 class BaseActivity:

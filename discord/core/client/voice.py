@@ -30,18 +30,18 @@ import struct
 from typing import Any, Callable, List, Optional, TYPE_CHECKING, Tuple, Union
 
 from . import opus
-from .gateway import *
+from .core.gateway.gateway import *
 from .errors import ClientException
 from .player import AudioPlayer, AudioSource
 from .utils import MISSING
 from .voice_state import VoiceConnectionState
 
 if TYPE_CHECKING:
-    from .gateway import DiscordVoiceWebSocket
+    from .core.gateway.gateway import DiscordVoiceWebSocket
     from .client import Client
-    from .guild import Guild
+    from .core.guild.guild import Guild
     from .state import ConnectionState
-    from .user import ClientUser
+    from .core.user.user import ClientUser
     from .opus import Encoder, APPLICATION_CTL, BAND_CTL, SIGNAL_CTL
     from .channel import StageChannel, VoiceChannel
     from . import abc
@@ -75,25 +75,7 @@ _log = logging.getLogger(__name__)
 
 
 class VoiceProtocol:
-    """A class that represents the Discord voice protocol.
 
-    This is an abstract class. The library provides a concrete implementation
-    under :class:`VoiceClient`.
-
-    This class allows you to implement a protocol to allow for an external
-    method of sending voice, such as Lavalink_ or a native library implementation.
-
-    These classes are passed to :meth:`abc.Connectable.connect <VoiceChannel.connect>`.
-
-    .. _Lavalink: https://github.com/freyacodes/Lavalink
-
-    Parameters
-    ------------
-    client: :class:`Client`
-        The client (or its subclasses) that started the connection request.
-    channel: :class:`abc.Connectable`
-        The voice channel that is being connected to.
-    """
 
     def __init__(self, client: Client, channel: abc.Connectable) -> None:
         self.client: Client = client
@@ -130,34 +112,7 @@ class VoiceProtocol:
         raise NotImplementedError
 
     async def connect(self, *, timeout: float, reconnect: bool, self_deaf: bool = False, self_mute: bool = False) -> None:
-        """|coro|
 
-        An abstract method called when the client initiates the connection request.
-
-        When a connection is requested initially, the library calls the constructor
-        under ``__init__`` and then calls :meth:`connect`. If :meth:`connect` fails at
-        some point then :meth:`disconnect` is called.
-
-        Within this method, to start the voice connection flow it is recommended to
-        use :meth:`Guild.change_voice_state` to start the flow. After which,
-        :meth:`on_voice_server_update` and :meth:`on_voice_state_update` will be called.
-        The order that these two are called is unspecified.
-
-        Parameters
-        ------------
-        timeout: :class:`float`
-            The timeout for the connection.
-        reconnect: :class:`bool`
-            Whether reconnection is expected.
-        self_mute: :class:`bool`
-            Indicates if the client should be self-muted.
-
-            .. versionadded:: 2.0
-        self_deaf: :class:`bool`
-            Indicates if the client should be self-deafened.
-
-            .. versionadded:: 2.0
-        """
         raise NotImplementedError
 
     async def disconnect(self, *, force: bool) -> None:
@@ -175,43 +130,12 @@ class VoiceProtocol:
         raise NotImplementedError
 
     def cleanup(self) -> None:
-        """This method *must* be called to ensure proper clean-up during a disconnect.
 
-        It is advisable to call this from within :meth:`disconnect` when you are
-        completely done with the voice protocol instance.
-
-        This method removes it from the internal state cache that keeps track of
-        currently alive voice clients. Failure to clean-up will cause subsequent
-        connections to report that it's still connected.
-        """
         key_id, _ = self.channel._get_voice_client_key()
         self.client._connection._remove_voice_client(key_id)
 
 
 class VoiceClient(VoiceProtocol):
-    """Represents a Discord voice connection.
-
-    You do not create these, you typically get them from
-    e.g. :meth:`VoiceChannel.connect`.
-
-    Warning
-    --------
-    In order to use PCM based AudioSources, you must have the opus library
-    installed on your system and loaded through :func:`opus.load_opus`.
-    Otherwise, your AudioSources must be opus encoded (e.g. using :class:`FFmpegOpusAudio`)
-    or the library will not be able to transmit audio.
-
-    Attributes
-    -----------
-    session_id: :class:`str`
-        The voice connection session ID.
-    token: :class:`str`
-        The voice connection token.
-    endpoint: :class:`str`
-        The endpoint we are connecting to.
-    channel: Union[:class:`VoiceChannel`, :class:`StageChannel`]
-        The voice channel connected to.
-    """
 
     channel: VocalGuildChannel
 
@@ -433,65 +357,6 @@ class VoiceClient(VoiceProtocol):
         bandwidth: BAND_CTL = 'full',
         signal_type: SIGNAL_CTL = 'auto',
     ) -> None:
-        """Plays an :class:`AudioSource`.
-
-        The finalizer, ``after`` is called after the source has been exhausted
-        or an error occurred.
-
-        If an error happens while the audio player is running, the exception is
-        caught and the audio player is then stopped.  If no after callback is
-        passed, any caught exception will be logged using the library logger.
-
-        Extra parameters may be passed to the internal opus encoder if a PCM based
-        source is used.  Otherwise, they are ignored.
-
-        .. versionchanged:: 2.0
-            Instead of writing to ``sys.stderr``, the library's logger is used.
-
-        .. versionchanged:: 2.4
-            Added encoder parameters as keyword arguments.
-
-        Parameters
-        -----------
-        source: :class:`AudioSource`
-            The audio source we're reading from.
-        after: Callable[[Optional[:class:`Exception`]], Any]
-            The finalizer that is called after the stream is exhausted.
-            This function must have a single parameter, ``error``, that
-            denotes an optional exception that was raised during playing.
-        application: :class:`str`
-            Configures the encoder's intended application.  Can be one of:
-            ``'audio'``, ``'voip'``, ``'lowdelay'``.
-            Defaults to ``'audio'``.
-        bitrate: :class:`int`
-            Configures the bitrate in the encoder.  Can be between ``16`` and ``512``.
-            Defaults to ``128``.
-        fec: :class:`bool`
-            Configures the encoder's use of inband forward error correction.
-            Defaults to ``True``.
-        expected_packet_loss: :class:`float`
-            Configures the encoder's expected packet loss percentage.  Requires FEC.
-            Defaults to ``0.15``.
-        bandwidth: :class:`str`
-            Configures the encoder's bandpass.  Can be one of:
-            ``'narrow'``, ``'medium'``, ``'wide'``, ``'superwide'``, ``'full'``.
-            Defaults to ``'full'``.
-        signal_type: :class:`str`
-            Configures the type of signal being encoded.  Can be one of:
-            ``'auto'``, ``'voice'``, ``'music'``.
-            Defaults to ``'auto'``.
-
-        Raises
-        -------
-        ClientException
-            Already playing audio or not connected.
-        TypeError
-            Source is not a :class:`AudioSource` or after is not a callable.
-        OpusNotLoaded
-            Source is not opus encoded and opus is not loaded.
-        ValueError
-            An improper value was passed as an encoder parameter.
-        """
 
         if not self.is_connected():
             raise ClientException('Not connected to voice.')

@@ -22,10 +22,10 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from .snowflake import Snowflake
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional, TypedDict, Union
 from typing_extensions import NotRequired
 
+Snowflake = Union[str, int]
 
 class AvatarDecorationData(TypedDict):
     asset: str
