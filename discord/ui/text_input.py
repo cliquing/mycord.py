@@ -27,18 +27,18 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Literal, Optional, Tuple, TypeVar
 
-from ..components import TextInput as TextInputComponent
-from ..enums import ComponentType, TextStyle
+from ..other.components.components import TextInput as TextInputComponent
+from ..other.components.enums import ComponentType, TextStyle
 from ..utils import MISSING
 from .item import Item
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ..types.components import TextInput as TextInputPayload
-    from ..types.interactions import ModalSubmitTextInputInteractionData as ModalSubmitTextInputInteractionDataPayload
+    from ..other.components.types import TextInput as TextInputPayload
+    from ..core.interaction.types import ModalSubmitTextInputInteractionData as ModalSubmitTextInputInteractionDataPayload
     from .view import View
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
 
 
 # fmt: off

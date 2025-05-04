@@ -25,28 +25,30 @@ DEALINGS IN THE SOFTWARE.
 from typing import List, Literal, Optional, TypedDict
 from typing_extensions import NotRequired, Required
 
-from .automod import AutoModerationAction, AutoModerationRuleTriggerType
-from .activity import PartialPresenceUpdate
-from .sku import Entitlement
-from .voice import GuildVoiceState
-from .integration import BaseIntegration, IntegrationApplication
-from .role import Role
-from .channel import ChannelType, StageInstance, VoiceChannelEffect
-from .interactions import Interaction
-from .invite import InviteTargetType
-from .emoji import Emoji, PartialEmoji
-from .member import MemberWithUser
-from .snowflake import Snowflake
-from .message import Message, ReactionType
-from .sticker import GuildSticker
-from .appinfo import GatewayAppInfo, PartialAppInfo
-from .guild import Guild, UnavailableGuild
-from .user import User, AvatarDecorationData
-from .threads import Thread, ThreadMember
-from .scheduled_event import GuildScheduledEvent
-from .audit_log import AuditLogEntry
-from .soundboard import SoundboardSound
-from .subscription import Subscription
+from ..guild.automod import AutoModerationAction, AutoModerationRuleTriggerType
+from ..client.activity import PartialPresenceUpdate
+from ..client.sku import Entitlement
+from ..state.types import GuildVoiceStatePayload
+from ..guild.integration import BaseIntegrationPayload, IntegrationApplication
+from ..guild.role import Role
+from ..guild.channel import ChannelType, VoiceChannelEffect
+from ..guild.channel.types import StageInstancePayload
+from ..interaction.interactions import Interaction
+from ..guild.invite import InviteTargetType
+from ..emoji import Emoji, PartialEmoji
+from ..guild.member import MemberWithUser
+from ...utils.snowflake import Snowflake
+from ..message import Message, ReactionType
+
+from ..appinfo import GatewayAppInfoPayload, PartialAppInfo
+from ..guild import Guild, UnavailableGuild
+from ..user import User, AvatarDecorationData
+from ..guild.threads import Thread, ThreadMember
+from ..guild.scheduled_event import GuildScheduledEvent
+from ..guild.audit_logs import AuditLogEntry
+from ..guild.soundboard import SoundboardSound
+from ..guild.sticker import GuildSticker
+from ..guild.subscription.types import SubscriptionPayload
 
 
 class SessionStartLimit(TypedDict):
@@ -72,7 +74,7 @@ class ReadyEvent(TypedDict):
     session_id: str
     resume_gateway_url: str
     shard: List[int]  # shard_id, num_shards
-    application: GatewayAppInfo
+    application: GatewayAppInfoPayload
 
 
 ResumedEvent = Literal[None]
@@ -283,7 +285,7 @@ class GuildIntegrationsUpdateEvent(TypedDict):
     guild_id: Snowflake
 
 
-class _IntegrationEvent(BaseIntegration, total=False):
+class _IntegrationEvent(BaseIntegrationPayload, total=False):
     guild_id: Required[Snowflake]
     role_id: Optional[Snowflake]
     enable_emoticons: bool
@@ -306,7 +308,7 @@ class WebhooksUpdateEvent(TypedDict):
     channel_id: Snowflake
 
 
-StageInstanceCreateEvent = StageInstanceUpdateEvent = StageInstanceDeleteEvent = StageInstance
+StageInstancePayloadCreateEvent = StageInstancePayloadUpdateEvent = StageInstancePayloadDeleteEvent = StageInstancePayload
 
 GuildScheduledEventCreateEvent = GuildScheduledEventUpdateEvent = GuildScheduledEventDeleteEvent = GuildScheduledEvent
 
@@ -319,7 +321,7 @@ class _GuildScheduledEventUsersEvent(TypedDict):
 
 GuildScheduledEventUserAdd = GuildScheduledEventUserRemove = _GuildScheduledEventUsersEvent
 
-VoiceStateUpdateEvent = GuildVoiceState
+VoiceStateUpdateEvent = GuildVoiceStatePayload
 VoiceChannelEffectSendEvent = VoiceChannelEffect
 
 GuildSoundBoardSoundCreateEvent = GuildSoundBoardSoundUpdateEvent = SoundboardSound
@@ -378,4 +380,4 @@ class PollVoteActionEvent(TypedDict):
     answer_id: int
 
 
-SubscriptionCreateEvent = SubscriptionUpdateEvent = SubscriptionDeleteEvent = Subscription
+SubscriptionCreateEvent = SubscriptionUpdateEvent = SubscriptionDeleteEvent = SubscriptionPayload

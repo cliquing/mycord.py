@@ -27,9 +27,9 @@ from __future__ import annotations
 from typing import Dict, List, Literal, Optional, TypedDict, Union
 from typing_extensions import NotRequired, Required
 
-from .channel import ChannelType
-from .snowflake import Snowflake
-from .interactions import InteractionContextType
+from ..core.guild.channel.types import ChannelType
+from ..utils.snowflake import Snowflake
+from ..core.interaction import InteractionContextType
 
 ApplicationCommandType = Literal[1, 2, 3]
 ApplicationCommandOptionType = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]

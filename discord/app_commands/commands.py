@@ -48,21 +48,24 @@ from typing import (
 import re
 from copy import copy as shallow_copy
 
-from ..enums import AppCommandOptionType, AppCommandType, ChannelType, Locale
+
+from ..core.appinfo import AppCommandOptionType, AppCommandType
+from ..utils.enums import Locale
+from ..core.guild.channel.enums import ChannelType
 from .installs import AppCommandContext, AppInstallationType
 from .models import Choice
 from .transformers import annotation_to_parameter, CommandParameter, NoneType
 from .errors import AppCommandError, CheckFailure, CommandInvokeError, CommandSignatureMismatch, CommandAlreadyRegistered
 from .translator import TranslationContextLocation, TranslationContext, Translator, locale_str
-from ..message import Message
-from ..user import User
-from ..member import Member
-from ..permissions import Permissions
+from ..core.message.message import Message
+from ..core.user.user import User
+from ..core.guild.member.member import Member
+from ..utils.permissions import Permissions
 from ..utils import resolve_annotation, MISSING, is_inside_class, maybe_coroutine, async_all, _shorten, _to_kebab_case
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec, Concatenate
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
     from ..abc import Snowflake
     from .namespace import Namespace
     from .models import ChoiceT

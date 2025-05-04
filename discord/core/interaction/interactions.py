@@ -31,58 +31,54 @@ from typing import Any, Dict, Optional, Generic, TYPE_CHECKING, Sequence, Tuple,
 import asyncio
 import datetime
 
-from . import utils
-from .enums import try_enum, Locale, InteractionType, InteractionResponseType
-from .errors import InteractionResponded, HTTPException, ClientException, DiscordException
-from .flags import MessageFlags
-from .channel import ChannelType
-from ._types import ClientT
-from .sku import Entitlement
+from ...utils import utils
+from .enums import InteractionType, InteractionResponseType
+from ...errors import InteractionResponded, HTTPException, ClientException, DiscordException
+from ..message.flags import MessageFlags
+from ..guild.channel import ChannelType
+from ..._types import ClientT
+from ...other.sku.sku import Entitlement
+from ...utils.enums import try_enum, Locale
 
-from .user import User
-from .member import Member
-from .message import Message, Attachment
-from .permissions import Permissions
-from .http import handle_message_parameters
-from .webhook.async_ import async_context, Webhook, interaction_response_params, interaction_message_response_params
-from .app_commands.installs import AppCommandContext
-from .app_commands.namespace import Namespace
-from .app_commands.translator import locale_str, TranslationContext, TranslationContextLocation
-from .channel import _threaded_channel_factory
+from ..user.user import User
+from ..guild.member import Member
+from ..message.message import Message, Attachment
+from ...utils.permissions import Permissions
+from ..http import handle_message_parameters
+from ..webhook.async_ import async_context, Webhook, interaction_response_params, interaction_message_response_params
+from ...app_commands.installs import AppCommandContext
+from ...app_commands.namespace import Namespace
+from ...app_commands.translator import locale_str, TranslationContext, TranslationContextLocation
+from ..guild.channel import _threaded_channel_factory
 
-__all__ = (
-    'Interaction',
-    'InteractionMessage',
-    'InteractionResponse',
+__all__ = ('Interaction', 'InteractionMessage', 'InteractionResponse',
     'InteractionCallbackResponse',
     'InteractionCallbackActivityInstance',
 )
 
 if TYPE_CHECKING:
-    from .types.interactions import (
+    from .types import (
         Interaction as InteractionPayload,
         InteractionData,
         ApplicationCommandInteractionData,
-        InteractionCallback as InteractionCallbackPayload,
-        InteractionCallbackActivity as InteractionCallbackActivityPayload,
+        InteractionCallbackPayload,
+        InteractionCallbackActivityPayload,
     )
-    from .types.webhook import (
-        Webhook as WebhookPayload,
-    )
-    from .types.snowflake import Snowflake
-    from .guild import Guild
-    from .state import ConnectionState
-    from .file import File
-    from .mentions import AllowedMentions
+    from ..webhook.types import Webhook as WebhookPayload
+    from ...utils.snowflake import Snowflake
+    from ..guild.guild import Guild
+    from ..state.state import ConnectionState
+    from ..message.file import File
+    from ..message.mentions import AllowedMentions
     from aiohttp import ClientSession
-    from .embeds import Embed
-    from .ui.view import View
-    from .app_commands.models import Choice, ChoiceT
-    from .ui.modal import Modal
-    from .channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel, DMChannel, GroupChannel
-    from .threads import Thread
-    from .app_commands.commands import Command, ContextMenu
-    from .poll import Poll
+    from ..message.embeds import Embed
+    from ...ui.view import View
+    from ...app_commands.models import Choice, ChoiceT
+    from ...ui.modal import Modal
+    from ..guild.channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel, DMChannel, GroupChannel
+    from ..guild.threads.threads import Thread
+    from ...app_commands.commands import Command, ContextMenu
+    from ..message.poll import Poll
 
     InteractionChannel = Union[
         VoiceChannel,

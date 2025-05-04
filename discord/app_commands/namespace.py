@@ -25,17 +25,17 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, NamedTuple, Tuple
-from ..member import Member
-from ..object import Object
-from ..role import Role
-from ..message import Message, Attachment
-from ..channel import PartialMessageable
-from ..enums import AppCommandOptionType
+from ..core.guild.member import Member
+from ..utils.object import Object
+from ..core.guild.role import Role
+from ..core.message.message import Message, Attachment
+from ..core.guild.channel import PartialMessageable
+from ..core.appinfo.enums import AppCommandOptionType
 from .models import AppCommandChannel, AppCommandThread
 
 if TYPE_CHECKING:
-    from ..interactions import Interaction
-    from ..types.interactions import ResolvedData, ApplicationCommandInteractionDataOption
+    from ..core.interaction.interactions import Interaction
+    from ..core.interaction.types import ResolvedData, ApplicationCommandInteractionDataOption
 
 __all__ = ('Namespace',)
 

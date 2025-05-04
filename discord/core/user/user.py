@@ -27,23 +27,23 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import discord.abc
-from ...asset import Asset
-from ...colour import Colour
-from ...enums import DefaultAvatar
-from ...flags import PublicUserFlags
-from ...utils import snowflake_time, _bytes_to_base64_data, MISSING, _get_as_snowflake
+from ..asset import Asset
+from ...utils.color import Colour
+from .enums import DefaultAvatar
+from .flags import PublicUserFlags
+from ...utils.utils import snowflake_time, _bytes_to_base64_data, MISSING, _get_as_snowflake
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
     from datetime import datetime
 
-    from ...channel import DMChannel
-    from ...guild import Guild
-    from ...message import Message
-    from ...state import ConnectionState
-    from ...types.channel import DMChannel as DMChannelPayload
-    from .types import PartialUser as PartialUserPayload, User as UserPayload, AvatarDecorationData
+    from ..guild.channel import DMChannel
+    from ..guild.guild import Guild
+    from ..message.message import Message
+    from ..state.state import ConnectionState
+    from ..guild.channel.types import DMChannelPayload
+    from .types import PartialUserPayload, UserPayload, AvatarDecorationData
 
 
 __all__ = (

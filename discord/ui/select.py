@@ -43,22 +43,23 @@ import inspect
 import os
 
 from .item import Item, ItemCallbackType
-from ..enums import ChannelType, ComponentType, SelectDefaultValueType
-from ..partial_emoji import PartialEmoji
-from ..emoji import Emoji
+from ..other.components.enums import ComponentType, SelectDefaultValueType
+from ..core.guild.channel.enums import ChannelType
+from ..core.emoji.partial import PartialEmoji
+from ..core.emoji.emoji import Emoji
 from ..utils import MISSING, _human_join
-from ..components import (
+from ..other.components.components import (
     SelectOption,
     SelectMenu,
     SelectDefaultValue,
 )
 from ..app_commands.namespace import Namespace
-from ..member import Member
-from ..object import Object
-from ..role import Role
-from ..user import User, ClientUser
+from ..core.guild.member.member import Member
+from ..utils.object import Object
+from ..core.guild.role import Role
+from ..core.user.user import User, ClientUser
 from ..abc import GuildChannel
-from ..threads import Thread
+from ..core.guild.threads import Thread
 
 __all__ = (
     'Select',
@@ -73,10 +74,10 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias, TypeGuard
 
     from .view import View
-    from ..types.components import SelectMenu as SelectMenuPayload
-    from ..types.interactions import SelectMessageComponentInteractionData
+    from ..other.components.types import SelectMenu as SelectMenuPayload
+    from ..core.interaction.types import SelectMessageComponentInteractionData
     from ..app_commands import AppCommandChannel, AppCommandThread
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
 
     ValidSelectType: TypeAlias = Literal[
         ComponentType.string_select,

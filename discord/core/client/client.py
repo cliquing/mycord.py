@@ -49,77 +49,74 @@ from typing import (
 import aiohttp
 
 from .sku import SKU, Entitlement
-from .user import User, ClientUser
-from .invite import Invite
-from .template import Template
-from .widget import Widget
-from .guild import Guild, GuildPreview
-from .emoji import Emoji
-from .channel import _threaded_channel_factory, PartialMessageable
-from .enums import ChannelType, EntitlementOwnerType
-from .mentions import AllowedMentions
-from .errors import *
-from .enums import Status
-from .flags import ApplicationFlags, Intents
-from .gateway import *
-from .activity import ActivityTypes, BaseActivity, create_activity
-from .voice_client import VoiceClient
-from .http import HTTPClient
-from .state import ConnectionState
-from . import utils
-from .utils import MISSING, time_snowflake
-from .object import Object
-from .backoff import ExponentialBackoff
-from .webhook import Webhook
-from .appinfo import AppInfo
-from .ui.view import View
-from .ui.dynamic import DynamicItem
-from .stage_instance import StageInstance
-from .threads import Thread
-from .sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
-from .soundboard import SoundboardDefaultSound, SoundboardSound
+from ..user.user import User, ClientUser
+from ..guild.invite.invite import Invite
+from ..guild.template import Template
+from ..guild.widget.widget import Widget
+from ..guild.guild import Guild, GuildPreview
+from ..emoji.emoji import Emoji
+from ..guild.channel import _threaded_channel_factory, PartialMessageable
+from ..guild.channel.enums import ChannelType, EntitlementOwnerType
+
+from ..message.mentions import AllowedMentions
+from ...errors import *
+from ..user.enums import Status
+from ..gateway.flags import Intents
+from ..appinfo.flags import ApplicationFlags
+from ..appinfo import AppInfo
+from ..gateway.gateway import *
+from .activity.activity import ActivityTypes, BaseActivity, create_activity
+from .voice import VoiceClient
+from ..http import HTTPClient
+from ..state.state import ConnectionState
+from ...utils import utils
+from ...utils import MISSING, time_snowflake
+from ...utils.object import Object
+from ...other.backoff import ExponentialBackoff
+from ..webhook import Webhook
+
+from ...ui.view import View
+from ...ui.dynamic import DynamicItem
+from ..guild.channel.stage_instance import StageInstance
+from ..guild.threads import Thread
+from ..guild.sticker.sticker import GuildSticker, StandardSticker, StickerPack, _sticker_factory
+from ..guild.soundboard import SoundboardDefaultSound, SoundboardSound
 
 if TYPE_CHECKING:
     from types import TracebackType
 
     from typing_extensions import Self
 
-    from .abc import Messageable, PrivateChannel, Snowflake, SnowflakeTime
-    from .app_commands import Command, ContextMenu
-    from .automod import AutoModAction, AutoModRule
-    from .channel import DMChannel, GroupChannel
-    from .ext.commands import AutoShardedBot, Bot, Context, CommandError
-    from .guild import GuildChannel
-    from .integrations import Integration
-    from .interactions import Interaction
-    from .member import Member, VoiceState
-    from .message import Message
-    from .raw_models import (
-        RawAppCommandPermissionsUpdateEvent,
-        RawBulkMessageDeleteEvent,
-        RawIntegrationDeleteEvent,
-        RawMemberRemoveEvent,
-        RawMessageDeleteEvent,
-        RawMessageUpdateEvent,
-        RawReactionActionEvent,
-        RawReactionClearEmojiEvent,
-        RawReactionClearEvent,
-        RawThreadDeleteEvent,
-        RawThreadMembersUpdate,
-        RawThreadUpdateEvent,
-        RawTypingEvent,
-        RawPollVoteActionEvent,
-    )
-    from .reaction import Reaction
-    from .role import Role
-    from .scheduled_event import ScheduledEvent
-    from .threads import ThreadMember
-    from .types.guild import Guild as GuildPayload
-    from .ui.item import Item
-    from .voice_client import VoiceProtocol
-    from .audit_logs import AuditLogEntry
-    from .poll import PollAnswer
-    from .subscription import Subscription
+    from ...abc import Messageable, PrivateChannel, Snowflake, SnowflakeTime
+    from ...app_commands import Command, ContextMenu
+    from ..guild.automod.automod import AutoModAction, AutoModRule
+    from ..guild.channel import DMChannel, GroupChannel
+    from ...ext.commands import AutoShardedBot, Bot, Context, CommandError
+    from ..guild.guild import GuildChannel
+    from ..guild.integration import Integration
+    from ..interaction.interactions import Interaction
+    from ..guild.member import Member, VoiceState
+    from ..message.message import Message
+    from ..appinfo.raw_models import RawAppCommandPermissionsUpdateEvent
+    from ..message.raw_models import RawBulkMessageDeleteEvent, RawMessageDeleteEvent, RawMessageUpdateEvent
+    from ..guild.integration.raw_models import RawIntegrationDeleteEvent
+    from ..message.reaction.raw_models import RawReactionActionEvent, RawReactionClearEmojiEvent, RawReactionClearEvent
+    from ..guild.threads.raw_models import RawThreadDeleteEvent, RawThreadUpdateEvent, RawThreadMembersUpdate
+    
+    from ..guild.member.raw_models import RawMemberRemoveEvent
+    
+    from .raw_models import RawTypingEvent, RawPresenceUpdateEvent
+    from ..message.poll.raw_models import RawPollVoteActionEvent
+    from ..message.reaction import Reaction
+    from ..guild.role import Role
+    from ..guild.scheduled_event import ScheduledEvent
+    from ..guild.threads import ThreadMember
+    from ..guild.types import GuildPayload
+    from ...ui.item import Item
+    from .voice import VoiceProtocol
+    from ..guild.audit_logs import AuditLogEntry
+    from ..message.poll import PollAnswer
+    from ..guild.subscription import Subscription
 
 
 # fmt: off
@@ -1047,7 +1044,7 @@ class Client:
         Optional[:class:`.StageInstance`]
             The stage instance or ``None`` if not found.
         """
-        from .channel import StageChannel
+        from ..guild.channel import StageChannel
 
         channel = self._connection.get_channel(id)
 

@@ -40,17 +40,15 @@ from urllib.parse import quote as urlquote
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Sequence, Tuple, Union, TypeVar, Type, overload
 import weakref
 
-from .. import utils
-from ..errors import HTTPException, Forbidden, NotFound, DiscordServerError
+from ...utils import utils
+from ...errors import HTTPException, Forbidden, NotFound, DiscordServerError
 from ..message import Message, MessageFlags
 from ..http import Route, handle_message_parameters
-from ..channel import PartialMessageable, ForumTag
+from ..guild.channel import PartialMessageable, ForumTag
 
 from .async_ import BaseWebhook, _WebhookState
 
-__all__ = (
-    'SyncWebhook',
-    'SyncWebhookMessage',
+__all__ = ('SyncWebhook', 'SyncWebhookMessage',
 )
 
 _log = logging.getLogger(__name__)
@@ -59,21 +57,18 @@ if TYPE_CHECKING:
     from typing_extensions import Self
     from types import TracebackType
 
-    from ..file import File
-    from ..embeds import Embed
-    from ..poll import Poll
-    from ..mentions import AllowedMentions
+    from ..message.file import File
+    from ..message.embeds import Embed
+    from ..message.poll import Poll
+    from ..message.mentions import AllowedMentions
     from ..message import Attachment
-    from ..abc import Snowflake
+    from ...abc import Snowflake
     from ..state import ConnectionState
-    from ..ui import View
-    from ..types.webhook import (
-        Webhook as WebhookPayload,
-    )
-    from ..types.message import (
-        Message as MessagePayload,
-    )
-    from ..types.snowflake import SnowflakeList
+    from ...ui import View
+
+    from .types import WebhookPayload
+    from ..message.types import MessagePayload
+    from ...utils.snowflake import SnowflakeList
 
     BE = TypeVar('BE', bound=BaseException)
 

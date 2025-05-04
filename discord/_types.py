@@ -27,7 +27,7 @@ from typing import TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing_extensions import TypeVar
-    from .client import Client
+    from .core.client.client import Client
 
     ClientT = TypeVar('ClientT', bound=Client, covariant=True, default=Client)
 else:

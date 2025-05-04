@@ -48,15 +48,15 @@ from typing import (
 from .errors import AppCommandError, TransformerError
 from .models import AppCommandChannel, AppCommandThread, Choice
 from .translator import TranslationContextLocation, TranslationContext, Translator, locale_str
-from ..channel import StageChannel, VoiceChannel, TextChannel, CategoryChannel, ForumChannel
+from ..core.guild.channel import StageChannel, VoiceChannel, TextChannel, CategoryChannel, ForumChannel
 from ..abc import GuildChannel
-from ..threads import Thread
+from ..other.threads.threads import Thread
 from ..enums import Enum as InternalEnum, AppCommandOptionType, ChannelType, Locale
 from ..utils import MISSING, maybe_coroutine
-from ..user import User
+from ..core.user.user import User
 from ..role import Role
-from ..member import Member
-from ..message import Attachment
+from ..core.member.member import Member
+from ..core.message.message import Attachment
 from .._types import ClientT
 
 __all__ = (
@@ -71,7 +71,7 @@ ChoiceT = TypeVar('ChoiceT', str, int, float, Union[str, int, float])
 NoneType = type(None)
 
 if TYPE_CHECKING:
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
     from .commands import Parameter
 
 

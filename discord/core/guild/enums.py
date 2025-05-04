@@ -1,4 +1,4 @@
-
+from ...utils.enums import Enum
 
 class PrivacyLevel(Enum):
     guild_only = 2
@@ -31,6 +31,28 @@ class NotificationLevel(Enum, comparable=True):
     only_mentions = 1
 
 
+class VerificationLevel(Enum, comparable=True):
+    none = 0
+    low = 1
+    medium = 2
+    high = 3
+    highest = 4
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class ContentFilter(Enum, comparable=True):
+    disabled = 0
+    no_role = 1
+    all_members = 2
+
+    def __str__(self) -> str:
+        return self.name
+    
+
+
+
 class TeamMembershipState(Enum):
     invited = 1
     accepted = 2
@@ -40,3 +62,18 @@ class TeamMemberRole(Enum):
     admin = 'admin'
     developer = 'developer'
     read_only = 'read_only'
+
+
+
+class ExpireBehaviour(Enum):
+    remove_role = 0
+    kick = 1
+
+
+ExpireBehavior = ExpireBehaviour
+
+
+class EntityType(Enum):
+    stage_instance = 1
+    voice = 2
+    external = 3

@@ -35,9 +35,9 @@ BaseT = TypeVar('BaseT', bound='Item[Any]', covariant=True)
 
 if TYPE_CHECKING:
     from typing_extensions import TypeVar, Self
-    from ..interactions import Interaction
-    from ..components import Component
-    from ..enums import ComponentType
+    from ..core.interaction.interactions import Interaction
+    from ..other.components.components import Component
+    from ..other.components.enums import ComponentType
     from .view import View
 
     V = TypeVar('V', bound='View', covariant=True, default=View)

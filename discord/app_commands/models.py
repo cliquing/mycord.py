@@ -26,22 +26,18 @@ from __future__ import annotations
 from datetime import datetime
 
 from .errors import MissingApplicationID
-from ..flags import AppCommandContext, AppInstallationType
 from .translator import TranslationContextLocation, TranslationContext, locale_str, Translator
-from ..permissions import Permissions
-from ..enums import (
-    AppCommandOptionType,
-    AppCommandType,
-    AppCommandPermissionType,
-    ChannelType,
-    Locale,
-    try_enum,
-)
-from ..mixins import Hashable
-from ..utils import _get_as_snowflake, parse_time, snowflake_time, MISSING
-from ..object import Object
-from ..role import Role
-from ..member import Member
+from ..utils.permissions import Permissions
+
+from ..core.appinfo.flags import AppCommandContext, AppInstallationType
+from ..core.guild.channel.enums import ChannelType
+from ..core.appinfo import AppCommandOptionType, AppCommandType, AppCommandPermissionType
+from ..utils.enums import Locale, try_enum
+from ..utils.mixins import Hashable
+from ..utils.utils import _get_as_snowflake, parse_time, snowflake_time, MISSING
+from ..utils.object import Object
+from ..core.guild.role import Role
+from ..core.guild.member import Member
 
 from typing import Any, Dict, Generic, List, TYPE_CHECKING, Optional, TypeVar, Union
 
@@ -67,26 +63,19 @@ def is_app_command_argument_type(value: int) -> bool:
 if TYPE_CHECKING:
     from ..types.command import (
         ApplicationCommand as ApplicationCommandPayload,
-        ApplicationCommandOption,
-        ApplicationCommandOptionChoice,
-        ApplicationCommandPermissions,
-        GuildApplicationCommandPermissions,
-    )
-    from ..types.interactions import (
-        PartialChannel,
-        PartialThread,
-    )
-    from ..types.threads import (
-        ThreadMetadata,
-        ThreadArchiveDuration,
+        ApplicationCommandOption, ApplicationCommandOptionChoice, ApplicationCommandPermissions, GuildApplicationCommandPermissions,
     )
 
+    from ..core.interaction.types import PartialChannel, PartialThread
+    from ..core.guild.threads.types import ThreadMetadata, ThreadArchiveDuration
+
+
     from ..abc import Snowflake
-    from ..state import ConnectionState
-    from ..guild import GuildChannel, Guild
-    from ..channel import TextChannel
-    from ..threads import Thread
-    from ..user import User
+    from ..core.state.state import ConnectionState
+    from ..core.guild.guild import GuildChannel, Guild
+    from ..core.guild.channel import TextChannel
+    from ..core.guild.threads import Thread
+    from ..core.user.user import User
 
     ApplicationCommandParent = Union['AppCommand', 'AppCommandGroup']
 

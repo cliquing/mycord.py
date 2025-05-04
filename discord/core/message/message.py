@@ -45,63 +45,61 @@ from typing import (
     overload,
 )
 
-from . import utils
-from .asset import Asset
+from ...utils import utils
+from ..asset import Asset
 from .reaction import Reaction
-from .emoji import Emoji
-from .partial_emoji import PartialEmoji
-from .enums import InteractionType, MessageReferenceType, MessageType, ChannelType, try_enum
-from .errors import HTTPException
-from .components import _component_factory
+from ..emoji.emoji import Emoji
+from ..emoji.partial import PartialEmoji
+from .enums import InteractionType, MessageReferenceType, MessageType, try_enum
+from ..guild.channel.enums import ChannelType
+from ...errors import HTTPException
+from ..components.components import _component_factory
 from .embeds import Embed
-from .member import Member
+from ..guild.member import Member
 from .flags import MessageFlags, AttachmentFlags
 from .file import File
-from .utils import escape_mentions, MISSING, deprecated
-from .http import handle_message_parameters
-from .guild import Guild
-from .mixins import Hashable
-from .sticker import StickerItem, GuildSticker
-from .threads import Thread
-from .channel import PartialMessageable
+from ...utils import escape_mentions, MISSING, deprecated
+from ..http import handle_message_parameters
+from ..guild.guild import Guild
+from ...utils.mixins import Hashable
+from ..guild.sticker import StickerItem, GuildSticker
+from ..guild.threads import Thread
+from ..guild.channel import PartialMessageable
 from .poll import Poll
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .types.message import (
+    from .types import (
         Message as MessagePayload,
-        Attachment as AttachmentPayload,
+        AttachmentPayload,
         MessageReference as MessageReferencePayload,
         MessageSnapshot as MessageSnapshotPayload,
         MessageApplication as MessageApplicationPayload,
         MessageActivity as MessageActivityPayload,
         RoleSubscriptionData as RoleSubscriptionDataPayload,
-        MessageInteractionMetadata as MessageInteractionMetadataPayload,
         CallMessage as CallMessagePayload,
         PurchaseNotificationResponse as PurchaseNotificationResponsePayload,
         GuildProductPurchase as GuildProductPurchasePayload,
     )
 
-    from .types.interactions import MessageInteraction as MessageInteractionPayload
+    from ..interaction.types import MessageInteractionPayload, MessageInteractionMetadata as MessageInteractionMetadataPayload
 
-    from .types.components import Component as ComponentPayload
-    from .types.threads import ThreadArchiveDuration
-    from .types.member import (
-        Member as MemberPayload,
-        UserWithMember as UserWithMemberPayload,
-    )
-    from .types.user import User as UserPayload
-    from .types.embed import Embed as EmbedPayload
-    from .types.gateway import MessageReactionRemoveEvent, MessageUpdateEvent
-    from .abc import Snowflake
-    from .abc import GuildChannel, MessageableChannel
-    from .components import ActionRow, ActionRowChildComponentType
-    from .state import ConnectionState
+    from ..components.types import ComponentPayload
+    from ..guild.threads import ThreadArchiveDuration
+
+    from ..guild.member.types import MemberPayload, UserWithMember as UserWithMemberPayload
+    from ..user.types import UserPayload
+    from .embeds.types import EmbedPayload
+    from ..gateway.types import MessageReactionRemoveEvent, MessageUpdateEvent
+    from ...abc import Snowflake
+    from ...abc import GuildChannel, MessageableChannel
+    from ..components.components import ActionRow, ActionRowChildComponentType
+    from ..state.state import ConnectionState
     from .mentions import AllowedMentions
-    from .user import User
-    from .role import Role
-    from .ui.view import View
+    from ..user.user import User
+    from ..guild.role import Role
+    from ...ui.view import View
 
     EmojiInputType = Union[Emoji, PartialEmoji, str]
     MessageComponentType = Union[ActionRow, ActionRowChildComponentType]
@@ -1184,16 +1182,7 @@ class PartialMessage(Hashable):
     __slots__ = ('channel', 'id', '_cs_guild', '_state', 'guild')
 
     def __init__(self, *, channel: MessageableChannel, id: int) -> None:
-        if not isinstance(channel, PartialMessageable) and channel.type not in (
-            ChannelType.text,
-            ChannelType.voice,
-            ChannelType.stage_voice,
-            ChannelType.news,
-            ChannelType.private,
-            ChannelType.news_thread,
-            ChannelType.public_thread,
-            ChannelType.private_thread,
-        ):
+        if not isinstance(channel, PartialMessageable) and channel.type not in (ChannelType.text, ChannelType.voice, ChannelType.stage_voice, ChannelType.news, ChannelType.private, ChannelType.news_thread, ChannelType.public_thread, ChannelType.private_thread,):
             raise TypeError(
                 f'expected PartialMessageable, TextChannel, StageChannel, VoiceChannel, DMChannel or Thread not {type(channel)!r}'
             )

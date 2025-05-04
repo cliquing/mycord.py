@@ -32,7 +32,7 @@ class AvatarDecorationData(TypedDict):
     sku_id: Snowflake
 
 
-class PartialUser(TypedDict):
+class PartialUserPayload(TypedDict):
     id: Snowflake
     username: str
     discriminator: str
@@ -44,7 +44,7 @@ class PartialUser(TypedDict):
 PremiumType = Literal[0, 1, 2, 3]
 
 
-class User(PartialUser, total=False):
+class UserPayload(PartialUserPayload, total=False):
     bot: bool
     system: bool
     mfa_enabled: bool

@@ -35,19 +35,22 @@ import weakref
 
 import aiohttp
 
-from .. import utils
-from ..errors import HTTPException, Forbidden, NotFound, DiscordServerError
-from ..message import Message
-from ..enums import try_enum, WebhookType, ChannelType, DefaultAvatar
-from ..user import BaseUser, User
-from ..flags import MessageFlags
-from ..asset import Asset
-from ..partial_emoji import PartialEmoji
+from ...utils import utils
+from ...errors import HTTPException, Forbidden, NotFound, DiscordServerError
+from ...core.message.message import Message
+from ...core.user.user import BaseUser, User
+from ...core.user import DefaultAvatar
+from ..guild.channel.enums import ChannelType
+from ...core.webhook import WebhookType
+from ...core.message.flags import MessageFlags
+from ...entity import Asset
+from ..emoji.partial import PartialEmoji
 from ..http import Route, handle_message_parameters, MultipartParameters, HTTPClient, json_or_text
-from ..mixins import Hashable
-from ..channel import TextChannel, ForumChannel, PartialMessageable, ForumTag
-from ..file import File
-
+from ...utils.mixins import Hashable
+from ..guild.channel import TextChannel, ForumChannel, PartialMessageable, ForumTag
+from ...entity import File
+from ...core.message.message import PartialMessageable
+from ...utils.enums import try_enum
 __all__ = (
     'Webhook',
     'WebhookMessage',
@@ -61,38 +64,30 @@ if TYPE_CHECKING:
     from typing_extensions import Self
     from types import TracebackType
 
-    from ..embeds import Embed
-    from ..client import Client
-    from ..mentions import AllowedMentions
-    from ..message import Attachment
-    from ..state import ConnectionState
+    from ..message.embeds import Embed
+    from ...core.client.client import Client
+    from ...core.message.mentions import AllowedMentions
+    from ...core.message.message import Attachment
+    from ...core.state.state import ConnectionState
     from ..http import Response
-    from ..guild import Guild
-    from ..emoji import Emoji
-    from ..channel import VoiceChannel
-    from ..abc import Snowflake
-    from ..ui.view import View
-    from ..poll import Poll
+    from ...core.guild.guild import Guild
+    from ...core.emoji.emoji import Emoji
+    from ..guild.channel import VoiceChannel
+    from ...abc import Snowflake
+    from ...ui.view import View
+    from ..message.poll import Poll
     import datetime
-    from ..types.webhook import (
-        Webhook as WebhookPayload,
-        SourceGuild as SourceGuildPayload,
-    )
-    from ..types.message import (
-        Message as MessagePayload,
-    )
-    from ..types.user import (
-        User as UserPayload,
-        PartialUser as PartialUserPayload,
-    )
-    from ..types.channel import (
-        PartialChannel as PartialChannelPayload,
-    )
-    from ..types.emoji import PartialEmoji as PartialEmojiPayload
-    from ..types.snowflake import SnowflakeList
-    from ..types.interactions import (
-        InteractionCallback as InteractionCallbackResponsePayload,
-    )
+
+
+
+    from .types import WebhookPayload, SourceGuildPayload
+    from ..message.types import MessagePayload
+    from ..user.types import UserPayload, PartialUserPayload
+    from ..guild.channel.types import PartialChannelPayload
+    from ...core.emoji.types import PartialEmojiPayload
+    from ...utils.snowflake import SnowflakeList
+    from ..interaction.types import InteractionCallbackPayload as InteractionCallbackResponsePayload
+
 
     BE = TypeVar('BE', bound=BaseException)
     _State = Union[ConnectionState, '_WebhookState']

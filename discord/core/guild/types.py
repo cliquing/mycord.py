@@ -4,18 +4,18 @@ from typing_extensions import NotRequired
 
 from .scheduled_event import GuildScheduledEvent
 from .sticker import GuildSticker
-from .snowflake import Snowflake
-from .channel import GuildChannel, StageInstance
-from .voice import GuildVoiceState
+from ...utils.snowflake import Snowflake
+from .channel.types import GuildChannelPayload, StageInstancePayload
+from ..state.types import GuildVoiceStatePayload
 from .welcome_screen import WelcomeScreen
-from .activity import PartialPresenceUpdate
-from .role import Role
-from .member import Member
-from .emoji import Emoji
-from .user import User
-from .threads import Thread
-from .soundboard import SoundboardSound
-
+from ..client.activity import PartialPresenceUpdate
+from .role import RolePayload
+from .member import MemberPayload
+from ..emoji import Emoji
+from ..user import User
+from .threads import ThreadPayload
+from .soundboard.types import SoundboardSoundPayload
+from .role import RolePayload
 
 class Ban(TypedDict):
     reason: Optional[str]
@@ -39,37 +39,11 @@ VerificationLevel = Literal[0, 1, 2, 3, 4]
 NSFWLevel = Literal[0, 1, 2, 3]
 PremiumTier = Literal[0, 1, 2, 3]
 GuildFeature = Literal[
-    'ANIMATED_BANNER',
-    'ANIMATED_ICON',
-    'APPLICATION_COMMAND_PERMISSIONS_V2',
-    'AUTO_MODERATION',
-    'BANNER',
-    'COMMUNITY',
-    'CREATOR_MONETIZABLE_PROVISIONAL',
-    'CREATOR_STORE_PAGE',
-    'DEVELOPER_SUPPORT_SERVER',
-    'DISCOVERABLE',
-    'FEATURABLE',
-    'INVITE_SPLASH',
-    'INVITES_DISABLED',
-    'MEMBER_VERIFICATION_GATE_ENABLED',
-    'MONETIZATION_ENABLED',
-    'MORE_EMOJI',
-    'MORE_STICKERS',
-    'NEWS',
-    'PARTNERED',
-    'PREVIEW_ENABLED',
-    'ROLE_ICONS',
-    'ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE',
-    'ROLE_SUBSCRIPTIONS_ENABLED',
-    'TICKETED_EVENTS_ENABLED',
-    'VANITY_URL',
-    'VERIFIED',
-    'VIP_REGIONS',
-    'WELCOME_SCREEN_ENABLED',
-    'RAID_ALERTS_DISABLED',
-    'SOUNDBOARD',
-    'MORE_SOUNDBOARD',
+    'ANIMATED_BANNER', 'ANIMATED_ICON', 'APPLICATION_COMMAND_PERMISSIONS_V2', 'AUTO_MODERATION','BANNER',
+    'COMMUNITY', 'CREATOR_MONETIZABLE_PROVISIONAL', 'CREATOR_STORE_PAGE','DEVELOPER_SUPPORT_SERVER', 'DISCOVERABLE','FEATURABLE', 'INVITE_SPLASH', 'INVITES_DISABLED',
+    'MEMBER_VERIFICATION_GATE_ENABLED', 'MONETIZATION_ENABLED', 'MORE_EMOJI','MORE_STICKERS', 'NEWS', 'PARTNERED', 'PREVIEW_ENABLED','ROLE_ICONS',
+    'ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE', 'ROLE_SUBSCRIPTIONS_ENABLED', 'TICKETED_EVENTS_ENABLED', 'VANITY_URL', 'VERIFIED',
+    'VIP_REGIONS', 'WELCOME_SCREEN_ENABLED', 'RAID_ALERTS_DISABLED', 'SOUNDBOARD', 'MORE_SOUNDBOARD',
 ]
 
 
@@ -94,7 +68,7 @@ class GuildPreview(_BaseGuildPreview, _GuildPreviewUnique):
     ...
 
 
-class Guild(_BaseGuildPreview):
+class GuildPayload(_BaseGuildPreview):
     owner_id: Snowflake
     region: str
     afk_channel_id: Optional[Snowflake]
@@ -102,7 +76,7 @@ class Guild(_BaseGuildPreview):
     verification_level: VerificationLevel
     default_message_notifications: DefaultMessageNotificationLevel
     explicit_content_filter: ExplicitContentFilterLevel
-    roles: List[Role]
+    roles: List[RolePayload]
     mfa_level: MFALevel
     nsfw_level: NSFWLevel
     application_id: Optional[Snowflake]
@@ -115,7 +89,7 @@ class Guild(_BaseGuildPreview):
     preferred_locale: str
     public_updates_channel_id: Optional[Snowflake]
     stickers: List[GuildSticker]
-    stage_instances: List[StageInstance]
+    stage_instances: List[StageInstancePayload]
     guild_scheduled_events: List[GuildScheduledEvent]
     icon_hash: NotRequired[Optional[str]]
     owner: NotRequired[bool]
@@ -125,23 +99,23 @@ class Guild(_BaseGuildPreview):
     joined_at: NotRequired[Optional[str]]
     large: NotRequired[bool]
     member_count: NotRequired[int]
-    voice_states: NotRequired[List[GuildVoiceState]]
-    members: NotRequired[List[Member]]
-    channels: NotRequired[List[GuildChannel]]
+    voice_states: NotRequired[List[GuildVoiceStatePayload]]
+    members: NotRequired[List[MemberPayload]]
+    channels: NotRequired[List[GuildChannelPayload]]
     presences: NotRequired[List[PartialPresenceUpdate]]
-    threads: NotRequired[List[Thread]]
+    threads: NotRequired[List[ThreadPayload]]
     max_presences: NotRequired[Optional[int]]
     max_members: NotRequired[int]
     premium_subscription_count: NotRequired[int]
     max_video_channel_users: NotRequired[int]
-    soundboard_sounds: NotRequired[List[SoundboardSound]]
+    soundboard_sounds: NotRequired[List[SoundboardSoundPayload]]
 
 
-class InviteGuild(Guild, total=False):
+class InviteGuildPayload(GuildPayload, total=False):
     welcome_screen: WelcomeScreen
 
 
-class GuildWithCounts(Guild, _GuildPreviewUnique):
+class GuildWithCounts(GuildPayload, _GuildPreviewUnique):
     ...
 
 

@@ -47,24 +47,21 @@ import threading
 
 from typing import TYPE_CHECKING, Optional, Dict, List, Callable, Coroutine, Any, Tuple
 
-from .enums import Enum
-from .utils import MISSING, sane_wait_for
-from .errors import ConnectionClosed
-from .backoff import ExponentialBackoff
-from .gateway import DiscordVoiceWebSocket
+from ...utils.enums import Enum
+from ...utils import MISSING, sane_wait_for
+from ...errors import ConnectionClosed
+from ...other.backoff import ExponentialBackoff
+from ..gateway.gateway import DiscordVoiceWebSocket
 
 if TYPE_CHECKING:
-    from . import abc
-    from .guild import Guild
-    from .user import ClientUser
-    from .member import VoiceState
-    from .voice_client import VoiceClient
+    from ... import abc
+    from ..guild.guild import Guild
+    from ..user.user import ClientUser
+    from ..guild.member import VoiceState
+    from ..client.voice import VoiceClient
 
-    from .types.voice import (
-        GuildVoiceState as GuildVoiceStatePayload,
-        VoiceServerUpdate as VoiceServerUpdatePayload,
-        SupportedModes,
-    )
+    from .types import GuildVoiceStatePayload, VoiceServerUpdate as VoiceServerUpdatePayload, SupportedModes
+
 
     WebsocketHook = Optional[Callable[[DiscordVoiceWebSocket, Dict[str, Any]], Coroutine[Any, Any, Any]]]
     SocketReaderCallback = Callable[[bytes], Any]

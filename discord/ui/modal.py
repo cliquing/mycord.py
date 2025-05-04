@@ -38,8 +38,8 @@ from .view import View
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ..interactions import Interaction
-    from ..types.interactions import ModalSubmitComponentInteractionData as ModalSubmitComponentInteractionDataPayload
+    from ..core.interaction.interactions import Interaction
+    from ..core.interaction import ModalSubmitComponentInteractionData as ModalSubmitComponentInteractionDataPayload
 
 
 # fmt: off

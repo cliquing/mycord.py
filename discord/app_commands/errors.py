@@ -26,9 +26,10 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, List, Optional, Sequence, Union
 
-from ..enums import AppCommandOptionType, AppCommandType, Locale
+from ..core.appinfo import AppCommandOptionType, AppCommandType
+from ..utils.enums import Locale
 from ..errors import DiscordException, HTTPException, _flatten_error_dict, MissingApplicationID as MissingApplicationID
-from ..utils import _human_join
+from ..utils.utils import _human_join
 
 __all__ = (
     'AppCommandError',
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
     from .commands import Command, Group, ContextMenu, Parameter
     from .transformers import Transformer
     from .translator import TranslationContextTypes, locale_str
-    from ..types.snowflake import Snowflake, SnowflakeList
+    from ..utils.snowflake import Snowflake, SnowflakeList
     from .checks import Cooldown
 
     CommandTypes = Union[Command[Any, ..., Any], Group, ContextMenu]

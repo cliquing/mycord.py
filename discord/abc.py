@@ -47,18 +47,19 @@ from typing import (
     runtime_checkable,
 )
 
-from .object import OLDEST_OBJECT, Object
-from .context_managers import Typing
-from .enums import ChannelType, InviteTarget
+from .utils.object import OLDEST_OBJECT, Object
+from .other.context_managers import Typing
+from .core.guild.channel.enums import ChannelType
+from .core.guild.invite.enums import InviteTarget
 from .errors import ClientException, NotFound
-from .mentions import AllowedMentions
-from .permissions import PermissionOverwrite, Permissions
-from .role import Role
-from .invite import Invite
-from .file import File
-from .http import handle_message_parameters
-from .voice_client import VoiceClient, VoiceProtocol
-from .sticker import GuildSticker, StickerItem
+from .core.message.mentions import AllowedMentions
+from .utils.permissions import PermissionOverwrite, Permissions
+from .core.guild.role import Role
+from .core.guild.invite import Invite
+from .core.message.file import File
+from .core.http import handle_message_parameters
+from .core.client.voice import VoiceClient, VoiceProtocol
+from .core.guild.sticker import GuildSticker, StickerItem
 from . import utils
 
 __all__ = (
@@ -75,39 +76,24 @@ T = TypeVar('T', bound=VoiceProtocol)
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .client import Client
-    from .user import ClientUser
-    from .asset import Asset
-    from .state import ConnectionState
-    from .guild import Guild
-    from .member import Member
-    from .channel import CategoryChannel
-    from .embeds import Embed
-    from .message import Message, MessageReference, PartialMessage
-    from .channel import (
-        TextChannel,
-        DMChannel,
-        GroupChannel,
-        PartialMessageable,
-        VocalGuildChannel,
-        VoiceChannel,
-        StageChannel,
-    )
-    from .poll import Poll
-    from .threads import Thread
+    from .core.client.client import Client
+    from .core.user.user import ClientUser
+    from .core.asset import Asset
+    from .core.state.state import ConnectionState
+    from .core.guild.guild import Guild
+    from .core.guild.member import Member
+    from .core.guild.channel import CategoryChannel
+    from .core.message.embeds import Embed
+    from .core.message.message import Message, MessageReference, PartialMessage
+    from .core.guild.channel import TextChannel, DMChannel, GroupChannel, PartialMessageable, VocalGuildChannel, VoiceChannel, StageChannel
+    from .core.message.poll import Poll
+    from .core.guild.threads import Thread
     from .ui.view import View
-    from .types.channel import (
-        PermissionOverwrite as PermissionOverwritePayload,
-        Channel as ChannelPayload,
-        GuildChannel as GuildChannelPayload,
-        OverwriteType,
-    )
-    from .types.guild import (
-        ChannelPositionUpdate,
-    )
-    from .types.snowflake import (
-        SnowflakeList,
-    )
+
+    from .core.guild.channel.types import PermissionOverwritePayload, ChannelPayload, GuildChannelPayload, OverwriteType
+    from .core.guild.types import ChannelPositionUpdate
+
+    from .utils.snowflake import SnowflakeList
 
     PartialMessageableChannel = Union[TextChannel, VoiceChannel, StageChannel, Thread, DMChannel, PartialMessageable]
     MessageableChannel = Union[PartialMessageableChannel, GroupChannel]
@@ -1613,7 +1599,7 @@ class Messageable:
             raise TypeError(f'view parameter must be View not {view.__class__.__name__}')
 
         if suppress_embeds or silent:
-            from .message import MessageFlags  # circular import
+            from .core.message.message import MessageFlags  # circular import
 
             flags = MessageFlags._from_value(0)
             flags.suppress_embeds = suppress_embeds

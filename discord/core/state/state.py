@@ -51,61 +51,73 @@ import inspect
 
 import os
 
-from .guild import Guild
-from .activity import BaseActivity
-from .sku import Entitlement
-from .user import User, ClientUser
-from .emoji import Emoji
-from .mentions import AllowedMentions
-from .partial_emoji import PartialEmoji
-from .message import Message
-from .channel import *
-from .channel import _channel_factory
-from .raw_models import *
-from .presences import RawPresenceUpdateEvent
-from .member import Member
+from ..guild.guild import Guild
+from ..activity.activity import BaseActivity
+from ...other.sku.sku import Entitlement
+from ..user.user import User, ClientUser
+from ..emoji.emoji import Emoji
+from ..message.mentions import AllowedMentions
+from ..emoji.partial import PartialEmoji
+from ..message.message import Message
+from ...channel import *
+from ...channel import _channel_factory
+from ...raw_models import *
+from ...presences import RawPresenceUpdateEvent
+from ..member.member import Member
 from .role import Role
 from .enums import ChannelType, try_enum, Status
-from . import utils
-from .flags import ApplicationFlags, Intents, MemberCacheFlags
-from .invite import Invite
-from .integrations import _integration_factory
-from .interactions import Interaction
-from .ui.view import ViewStore, View
-from .scheduled_event import ScheduledEvent
-from .stage_instance import StageInstance
-from .threads import Thread, ThreadMember
-from .sticker import GuildSticker
-from .automod import AutoModRule, AutoModAction
-from .audit_logs import AuditLogEntry
-from ._types import ClientT
-from .soundboard import SoundboardSound
-from .subscription import Subscription
+from ...utils import utils
+from ...flags import ApplicationFlags, Intents, MemberCacheFlags
+from ..invite.invite import Invite
+from ...other.integration.integrations import _integration_factory
+from ..interaction.interactions import Interaction
+from ...ui.view import ViewStore, View
+from ..channel.stage_instance import StageInstance
+
+
+from ..._types import ClientT
+
+from ...other.subscription.subscription import Subscription
+
+from ..guild.audit_logs.types import AuditLogEntry
+from ..guild.soundboard import SoundboardSound
+from ..guild.threads.types import Thread, ThreadMember
+from ..guild.sticker import GuildSticker
+from ..guild.automod import AutoModRule, AutoModAction
+from ..guild.scheduled_event import ScheduledEvent
+
+from ..message import types as msg_types, raw_models as msg_models
+from ..message.reaction import types as react_types, raw_models as react_models
+
+from ..client.activity import types as act_types
+from ..client import raw_models as client_models
+
+from ..interaction import types as inter_types
 
 
 if TYPE_CHECKING:
-    from .abc import PrivateChannel
-    from .message import MessageableChannel
-    from .guild import GuildChannel
-    from .http import HTTPClient
+    from ...abc import PrivateChannel
+    from ..message.message import MessageableChannel
+    from ..guild.guild import GuildChannel
+    from ..http import HTTPClient
     from .voice_client import VoiceProtocol
-    from .gateway import DiscordWebSocket
-    from .ui.item import Item
-    from .ui.dynamic import DynamicItem
-    from .app_commands import CommandTree, Translator
-    from .poll import Poll
+    from ..gateway.gateway import DiscordWebSocket
+    from ...ui.item import Item
+    from ...ui.dynamic import DynamicItem
+    from ...app_commands import CommandTree, Translator
+    from ...other.poll.poll import Poll
 
-    from .types.automod import AutoModerationRule, AutoModerationActionExecution
-    from .types.snowflake import Snowflake
-    from .types.activity import Activity as ActivityPayload
-    from .types.channel import DMChannel as DMChannelPayload
-    from .types.user import User as UserPayload, PartialUser as PartialUserPayload
-    from .types.emoji import Emoji as EmojiPayload, PartialEmoji as PartialEmojiPayload
-    from .types.sticker import GuildSticker as GuildStickerPayload
-    from .types.guild import Guild as GuildPayload
-    from .types.message import Message as MessagePayload, PartialMessage as PartialMessagePayload
-    from .types import gateway as gw
-    from .types.command import GuildApplicationCommandPermissions as GuildApplicationCommandPermissionsPayload
+    from ...types import AutoModerationRule, AutoModerationActionExecution
+    from ...defaults.snowflake import Snowflake
+    from ...types import Activity as ActivityPayload
+    from ...types import DMChannel as DMChannelPayload
+    from ...types import User as UserPayload, PartialUser as PartialUserPayload
+    from ...types import Emoji as EmojiPayload, PartialEmoji as PartialEmojiPayload
+    from ...types import GuildSticker as GuildStickerPayload
+    from ...types import Guild as GuildPayload
+    from ...types import Message as MessagePayload, PartialMessage as PartialMessagePayload
+    from ...types import gateway as gw
+    from ...types.command import GuildApplicationCommandPermissions as GuildApplicationCommandPermissionsPayload
 
     T = TypeVar('T')
     Channel = Union[GuildChannel, PrivateChannel, PartialMessageable]
@@ -692,8 +704,10 @@ class ConnectionState(Generic[ClientT]):
         if channel and channel.__class__ in (TextChannel, VoiceChannel, Thread, StageChannel):
             channel.last_message_id = message.id  # type: ignore
 
-    def parse_message_delete(self, data: gw.MessageDeleteEvent) -> None:
-        raw = RawMessageDeleteEvent(data)
+    
+
+    def parse_message_delete(self, data: msg_types.MessageDeleteEvent) -> None:
+        raw = msg_models.RawMessageDeleteEvent(data)
         found = self._get_message(raw.message_id)
         raw.cached_message = found
         self.dispatch('raw_message_delete', raw)
@@ -701,8 +715,8 @@ class ConnectionState(Generic[ClientT]):
             self.dispatch('message_delete', found)
             self._messages.remove(found)
 
-    def parse_message_delete_bulk(self, data: gw.MessageDeleteBulkEvent) -> None:
-        raw = RawBulkMessageDeleteEvent(data)
+    def parse_message_delete_bulk(self, data: msg_types.MessageDeleteBulkEvent) -> None:
+        raw = msg_models.RawBulkMessageDeleteEvent(data)
         if self._messages:
             found_messages = [message for message in self._messages if message.id in raw.message_ids]
         else:
@@ -715,12 +729,12 @@ class ConnectionState(Generic[ClientT]):
                 # self._messages won't be None here
                 self._messages.remove(msg)  # type: ignore
 
-    def parse_message_update(self, data: gw.MessageUpdateEvent) -> None:
+    def parse_message_update(self, data: msg_types.MessageUpdateEvent) -> None:
         channel, _ = self._get_guild_channel(data)
         # channel would be the correct type here
         updated_message = Message(channel=channel, data=data, state=self)  # type: ignore
 
-        raw = RawMessageUpdateEvent(data=data, message=updated_message)
+        raw = msg_models.RawMessageUpdateEvent(data=data, message=updated_message)
         cached_message = self._get_message(updated_message.id)
         if cached_message is not None:
             older_message = copy.copy(cached_message)
@@ -743,10 +757,10 @@ class ConnectionState(Generic[ClientT]):
             if self._view_store.is_message_tracked(entity_id):
                 self._view_store.update_from_message(entity_id, data['components'])
 
-    def parse_message_reaction_add(self, data: gw.MessageReactionAddEvent) -> None:
+    def parse_message_reaction_add(self, data: msg_types.MessageReactionAddEvent) -> None:
         emoji = PartialEmoji.from_dict(data['emoji'])
         emoji._state = self
-        raw = RawReactionActionEvent(data, emoji, 'REACTION_ADD')
+        raw = react_models.RawReactionActionEvent(data, emoji, 'REACTION_ADD')
 
         member_data = data.get('member')
         if member_data:
@@ -769,8 +783,8 @@ class ConnectionState(Generic[ClientT]):
             if user:
                 self.dispatch('reaction_add', reaction, user)
 
-    def parse_message_reaction_remove_all(self, data: gw.MessageReactionRemoveAllEvent) -> None:
-        raw = RawReactionClearEvent(data)
+    def parse_message_reaction_remove_all(self, data: msg_types.MessageReactionRemoveAllEvent) -> None:
+        raw = react_models.RawReactionClearEvent(data)
         self.dispatch('raw_reaction_clear', raw)
 
         message = self._get_message(raw.message_id)
@@ -779,10 +793,10 @@ class ConnectionState(Generic[ClientT]):
             message.reactions.clear()
             self.dispatch('reaction_clear', message, old_reactions)
 
-    def parse_message_reaction_remove(self, data: gw.MessageReactionRemoveEvent) -> None:
+    def parse_message_reaction_remove(self, data: msg_types.MessageReactionRemoveEvent) -> None:
         emoji = PartialEmoji.from_dict(data['emoji'])
         emoji._state = self
-        raw = RawReactionActionEvent(data, emoji, 'REACTION_REMOVE')
+        raw = react_models.RawReactionActionEvent(data, emoji, 'REACTION_REMOVE')
         self.dispatch('raw_reaction_remove', raw)
 
         message = self._get_message(raw.message_id)
@@ -797,10 +811,10 @@ class ConnectionState(Generic[ClientT]):
                 if user:
                     self.dispatch('reaction_remove', reaction, user)
 
-    def parse_message_reaction_remove_emoji(self, data: gw.MessageReactionRemoveEmojiEvent) -> None:
+    def parse_message_reaction_remove_emoji(self, data: msg_types.MessageReactionRemoveEmojiEvent) -> None:
         emoji = PartialEmoji.from_dict(data['emoji'])
         emoji._state = self
-        raw = RawReactionClearEmojiEvent(data, emoji)
+        raw = react_models.RawReactionClearEmojiEvent(data, emoji)
         self.dispatch('raw_reaction_clear_emoji', raw)
 
         message = self._get_message(raw.message_id)
@@ -812,9 +826,11 @@ class ConnectionState(Generic[ClientT]):
             else:
                 if reaction:
                     self.dispatch('reaction_clear_emoji', reaction)
+    
+    
 
-    def parse_interaction_create(self, data: gw.InteractionCreateEvent) -> None:
-        interaction = Interaction(data=data, state=self)
+    def parse_interaction_create(self, data: inter_types.InteractionCreateEvent) -> None:
+        interaction = inter_types.Interaction(data=data, state=self)
         if data['type'] in (2, 4) and self._command_tree:  # application command and auto complete
             self._command_tree._from_interaction(interaction)
         elif data['type'] == 3:  # interaction component
@@ -830,9 +846,10 @@ class ConnectionState(Generic[ClientT]):
             components = inner_data['components']
             self._view_store.dispatch_modal(custom_id, interaction, components)
         self.dispatch('interaction', interaction)
+    
 
-    def parse_presence_update(self, data: gw.PresenceUpdateEvent) -> None:
-        raw = RawPresenceUpdateEvent(data=data, state=self)
+    def parse_presence_update(self, data: act_types.PresenceUpdateEvent) -> None:
+        raw = client_models.RawPresenceUpdateEvent(data=data, state=self)
 
         if self.raw_presence_flag:
             self.dispatch('raw_presence_update', raw)

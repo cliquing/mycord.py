@@ -48,15 +48,15 @@ from .errors import (
     CommandOnCooldown,
 )
 
-from ..user import User
-from ..permissions import Permissions
-from ..utils import get as utils_get, MISSING, maybe_coroutine
+from ..core.user.user import User
+from ..utils.permissions import Permissions
+from ..utils.utils import get as utils_get, MISSING, maybe_coroutine
 
 T = TypeVar('T')
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
 
     CooldownFunction = Union[
         Callable[[Interaction[Any]], Coroutine[Any, Any, T]],

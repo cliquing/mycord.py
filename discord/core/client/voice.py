@@ -30,27 +30,24 @@ import struct
 from typing import Any, Callable, List, Optional, TYPE_CHECKING, Tuple, Union
 
 from . import opus
-from .core.gateway.gateway import *
-from .errors import ClientException
-from .player import AudioPlayer, AudioSource
-from .utils import MISSING
-from .voice_state import VoiceConnectionState
+from ..gateway.gateway import *
+from ...errors import ClientException
+from ...utils.player import AudioPlayer, AudioSource
+from ...utils.utils import MISSING
+from ..state.voice_state import VoiceConnectionState
 
 if TYPE_CHECKING:
-    from .core.gateway.gateway import DiscordVoiceWebSocket
+    from ..gateway import DiscordVoiceWebSocket
     from .client import Client
-    from .core.guild.guild import Guild
-    from .state import ConnectionState
-    from .core.user.user import ClientUser
-    from .opus import Encoder, APPLICATION_CTL, BAND_CTL, SIGNAL_CTL
-    from .channel import StageChannel, VoiceChannel
+    from ..guild import Guild
+    from ..state import ConnectionState
+    from ..user.user import ClientUser
+    from ...utils.opus import Encoder, APPLICATION_CTL, BAND_CTL, SIGNAL_CTL
+    from ..guild.channel import StageChannel, VoiceChannel
     from . import abc
 
-    from .types.voice import (
-        GuildVoiceState as GuildVoiceStatePayload,
-        VoiceServerUpdate as VoiceServerUpdatePayload,
-        SupportedModes,
-    )
+
+    from ..state.types import GuildVoiceStatePayload, VoiceServerUpdatePayload, SupportedModes
 
     VocalGuildChannel = Union[VoiceChannel, StageChannel]
 

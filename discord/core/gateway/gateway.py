@@ -39,27 +39,22 @@ from typing import Any, Callable, Coroutine, Deque, Dict, List, TYPE_CHECKING, N
 import aiohttp
 import yarl
 
-from . import utils
-from .activity import BaseActivity
-from .enums import SpeakingState
-from .errors import ConnectionClosed
+from ...utils import utils
+from ..client.activity import BaseActivity
+from ..client.enums import SpeakingState
+from ...errors import ConnectionClosed
 
 _log = logging.getLogger(__name__)
 
-__all__ = (
-    'DiscordWebSocket',
-    'KeepAliveHandler',
-    'VoiceKeepAliveHandler',
-    'DiscordVoiceWebSocket',
-    'ReconnectWebSocket',
+__all__ = ('DiscordWebSocket', 'KeepAliveHandler', 'VoiceKeepAliveHandler', 'DiscordVoiceWebSocket', 'ReconnectWebSocket',
 )
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .client import Client
-    from .state import ConnectionState
-    from .voice_state import VoiceConnectionState
+    from ..client.client import Client
+    from ..state.state import ConnectionState
+    from ..state.voice_state import VoiceConnectionState
 
 
 class ReconnectWebSocket(Exception):
@@ -361,7 +356,7 @@ class DiscordWebSocket:
         This is for internal use only.
         """
         # Circular import
-        from .http import INTERNAL_API_VERSION
+        from ..http import INTERNAL_API_VERSION
 
         gateway = gateway or cls.DEFAULT_GATEWAY
 

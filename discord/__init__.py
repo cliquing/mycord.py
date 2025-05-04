@@ -26,18 +26,18 @@ from .core.client.client import *
 from .other.appinfo.appinfo import *
 from .core.user.user import *
 from .core.emoji.emoji import *
-from .core.emoji.partial_emoji import *
+from .core.emoji.partial import *
 from .core.activity.activity import *
 from .channel import *
 from .core.guild.guild import *
 from .flags import *
 from .core.member.member import *
 from .core.message.message import *
-from .entity.asset import *
+from .core.asset import *
 from .errors import *
-from .entity.permissions import *
+from .utils.permissions import *
 from .core.role import *
-from .entity.file import *
+from .core.message.file import *
 from .entity.colour import *
 from .other.integration.integrations import *
 from .core.invite.invite import *
@@ -45,7 +45,7 @@ from .other.template.template import *
 from .other.welcome_screen.welcome_screen import *
 from .other.sku.sku import *
 from .other.widget.widget import *
-from .object import *
+from .utils.object import *
 from .core.reaction.reaction import *
 from . import (
     utils as utils,
@@ -57,17 +57,17 @@ from .enums import *
 from .core.embeds.embeds import *
 from .core.message.mentions import *
 from .shard import *
-from .player import *
+from .other.player import *
 from .core.webhook import *
 from .core.client.voice import *
 from .other.audit_logs.audit_logs import *
 from .raw_models import *
-from .team import *
+from .other.appinfo.team import *
 from .other.sticker.sticker import *
-from .stage_instance import *
+from .core.channel.stage_instance import *
 from .other.scheduled_event.scheduled_event import *
 from .core.interaction.interactions import *
-from .components import *
+from .other.components.components import *
 from .other.threads.threads import *
 from .other.automod.automod import *
 from .other.poll.poll import *
@@ -95,3 +95,5 @@ if len(MissingApplicationID.__bases__) == 1:
     MissingApplicationID.__bases__ = (app_commands.AppCommandError, ClientException)
 
 del logging, NamedTuple, Literal, VersionInfo
+
+from .defaults import *

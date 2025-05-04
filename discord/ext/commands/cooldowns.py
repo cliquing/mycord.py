@@ -39,7 +39,7 @@ from discord.app_commands import Cooldown as Cooldown
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ...message import Message
+    from ...core.message.message import Message
 
 __all__ = (
     'BucketType',

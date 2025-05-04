@@ -1,4 +1,4 @@
-
+from ... import Enum
 
 class MessageReferenceType(Enum):
     default = 0

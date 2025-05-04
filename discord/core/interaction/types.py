@@ -27,18 +27,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict, Union
 from typing_extensions import NotRequired
 
-from .channel import ChannelTypeWithoutThread, ThreadMetadata, GuildChannel, InteractionDMChannel, GroupDMChannel
-from .sku import Entitlement
-from .threads import ThreadType
-from .member import Member
-from .message import Attachment
-from .role import Role
-from .snowflake import Snowflake
-from .user import User
-from .guild import GuildFeature
+from ..guild.channel.types import ChannelTypeWithoutThread, GuildChannelPayload, InteractionDMChannelPayload, GroupDMChannelPayload
+from ..guild.threads.types import ThreadMetadata
+from ...other.sku import Entitlement
+from ..guild.threads import ThreadType
+from ..guild.member import Member
+from ..message import Attachment
+from ..guild.role import Role
+from ...utils.snowflake import Snowflake
+from ..user import User
+from ..guild import GuildFeature
 
 if TYPE_CHECKING:
-    from .message import Message
+    from ..message import Message
 
 
 InteractionType = Literal[1, 2, 3, 4, 5]
@@ -125,12 +126,7 @@ class _NumberValueApplicationCommandInteractionDataOption(_BaseValueApplicationC
     value: float
 
 
-_ValueApplicationCommandInteractionDataOption = Union[
-    _StringValueApplicationCommandInteractionDataOption,
-    _IntegerValueApplicationCommandInteractionDataOption,
-    _BooleanValueApplicationCommandInteractionDataOption,
-    _SnowflakeValueApplicationCommandInteractionDataOption,
-    _NumberValueApplicationCommandInteractionDataOption,
+_ValueApplicationCommandInteractionDataOption = Union[_StringValueApplicationCommandInteractionDataOption, _IntegerValueApplicationCommandInteractionDataOption, _BooleanValueApplicationCommandInteractionDataOption, _SnowflakeValueApplicationCommandInteractionDataOption, _NumberValueApplicationCommandInteractionDataOption,
 ]
 
 
@@ -164,10 +160,7 @@ class MessageApplicationCommandInteractionData(_BaseNonChatInputApplicationComma
     type: Literal[3]
 
 
-ApplicationCommandInteractionData = Union[
-    ChatInputApplicationCommandInteractionData,
-    UserApplicationCommandInteractionData,
-    MessageApplicationCommandInteractionData,
+ApplicationCommandInteractionData = Union[ChatInputApplicationCommandInteractionData,UserApplicationCommandInteractionData, MessageApplicationCommandInteractionData,
 ]
 
 
@@ -225,7 +218,7 @@ class _BaseInteraction(TypedDict):
     guild_id: NotRequired[Snowflake]
     guild: NotRequired[PartialInteractionGuild]
     channel_id: NotRequired[Snowflake]
-    channel: Union[GuildChannel, InteractionDMChannel, GroupDMChannel]
+    channel: Union[GuildChannelPayload, InteractionDMChannelPayload, GroupDMChannelPayload]
     app_permissions: NotRequired[str]
     locale: NotRequired[str]
     guild_locale: NotRequired[str]
@@ -254,10 +247,9 @@ class ModalSubmitInteraction(_BaseInteraction):
     data: ModalSubmitInteractionData
 
 
-Interaction = Union[PingInteraction, ApplicationCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction]
 
 
-class MessageInteraction(TypedDict):
+class MessageInteractionPayload(TypedDict):
     id: Snowflake
     type: InteractionType
     name: str
@@ -322,16 +314,21 @@ class InteractionCallbackResponse(TypedDict):
     response_message_ephemeral: NotRequired[bool]
 
 
-class InteractionCallbackActivity(TypedDict):
+class InteractionCallbackActivityPayload(TypedDict):
     id: str
 
 
 class InteractionCallbackResource(TypedDict):
     type: InteractionResponseType
-    activity_instance: NotRequired[InteractionCallbackActivity]
+    activity_instance: NotRequired[InteractionCallbackActivityPayload]
     message: NotRequired[Message]
 
 
-class InteractionCallback(TypedDict):
+class InteractionCallbackPayload(TypedDict):
     interaction: InteractionCallbackResponse
     resource: NotRequired[InteractionCallbackResource]
+
+
+Interaction = Union[PingInteraction, ApplicationCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction]
+
+InteractionCreateEvent = Interaction

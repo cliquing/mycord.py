@@ -32,7 +32,7 @@ __all__ = (
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from ..types.interactions import InteractionContextType, InteractionInstallationType
+    from ..core.interaction.types import InteractionContextType, InteractionInstallationType
 
 
 class AppInstallationType:

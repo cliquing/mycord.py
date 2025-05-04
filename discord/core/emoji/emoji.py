@@ -25,25 +25,24 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 from typing import Any, Collection, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
-from .asset import Asset, AssetMixin
-from .utils import SnowflakeList, snowflake_time, MISSING
-from .partial_emoji import _EmojiTag, PartialEmoji
-from .user import User
-from .errors import MissingApplicationID
-from .object import Object
+from ..asset import Asset, AssetMixin
+from ...utils import SnowflakeList, snowflake_time, MISSING
+from .partial import _EmojiTag, PartialEmoji
+from ..user.user import User
+from ...errors import MissingApplicationID
+from ...utils.object import Object
 
 # fmt: off
-__all__ = (
-    'Emoji',
+__all__ = ('Emoji',
 )
 # fmt: on
 
 if TYPE_CHECKING:
-    from .types.emoji import Emoji as EmojiPayload
-    from .guild import Guild
-    from .state import ConnectionState
-    from .abc import Snowflake
-    from .role import Role
+    from .types import EmojiPayload
+    from ..guild.guild import Guild
+    from ..state.state import ConnectionState
+    from ...abc import Snowflake
+    from ..guild.role import Role
     from datetime import datetime
 
 

@@ -24,17 +24,17 @@ DEALINGS IN THE SOFTWARE.
 
 from typing import Optional, TypedDict
 from typing_extensions import NotRequired
-from .snowflake import Snowflake, SnowflakeList
-from .user import User
+from ..user import User
+from ...utils.snowflake import Snowflake, SnowflakeList
 
 
-class PartialEmoji(TypedDict):
+class PartialEmojiPayload(TypedDict):
     id: Optional[Snowflake]
     name: Optional[str]
     animated: NotRequired[bool]
 
 
-class Emoji(PartialEmoji, total=False):
+class EmojiPayload(PartialEmojiPayload, total=False):
     roles: SnowflakeList
     user: User
     require_colons: bool
@@ -46,3 +46,9 @@ class Emoji(PartialEmoji, total=False):
 class EditEmoji(TypedDict):
     name: str
     roles: Optional[SnowflakeList]
+
+
+class ActivityEmojiPayload(TypedDict):
+    name: str
+    id: NotRequired[Snowflake]
+    animated: NotRequired[bool]

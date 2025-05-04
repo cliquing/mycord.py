@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
     _ResponseType = Union[ClientResponse, Response]
 
-    from .interactions import Interaction
+    from .core.interaction.interactions import Interaction
 
 __all__ = (
     'DiscordException',

@@ -68,7 +68,7 @@ from .._types import ClientT
 
 if TYPE_CHECKING:
     from ..types.interactions import ApplicationCommandInteractionData, ApplicationCommandInteractionDataOption
-    from ..interactions import Interaction
+    from ..core.interaction.interactions import Interaction
     from ..abc import Snowflake
     from .commands import ContextMenuCallback, CommandCallback, P, T
 

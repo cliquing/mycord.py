@@ -49,18 +49,19 @@ from typing import (
 )
 import warnings
 
-from . import utils, abc
+from ...utils import utils
+from ... import abc
 from .role import Role
 from .member import Member, VoiceState
-from .emoji import Emoji
-from .errors import InvalidData
-from .permissions import PermissionOverwrite
-from .colour import Colour
-from .errors import ClientException
-from .channel import *
-from .channel import _guild_channel_factory
-from .channel import _threaded_guild_channel_factory
-from .enums import (
+from ..emoji.emoji import Emoji
+from ...errors import InvalidData
+from ...utils.permissions import PermissionOverwrite
+from ...utils.color import Colour
+from ...errors import ClientException
+from ...channel import *
+from ...channel import _guild_channel_factory
+from ...channel import _threaded_guild_channel_factory
+from ...enums import (
     AuditLogAction,
     VideoQualityMode,
     ChannelType,
@@ -77,25 +78,25 @@ from .enums import (
     ForumOrderType,
     ForumLayoutType,
 )
-from .mixins import Hashable
-from .user import User
-from .invite import Invite
-from .widget import Widget
-from .asset import Asset
-from .flags import SystemChannelFlags
-from .integrations import Integration, PartialIntegration, _integration_factory
-from .scheduled_event import ScheduledEvent
-from .stage_instance import StageInstance
-from .threads import Thread, ThreadMember
-from .sticker import GuildSticker
-from .file import File
-from .audit_logs import AuditLogEntry
-from .object import OLDEST_OBJECT, Object
-from .welcome_screen import WelcomeScreen, WelcomeChannel
-from .automod import AutoModRule, AutoModTrigger, AutoModRuleAction
-from .partial_emoji import _EmojiTag, PartialEmoji
-from .soundboard import SoundboardSound
-from .presences import RawPresenceUpdateEvent
+from ...utils.mixins import Hashable
+from ..user.user import User
+from ..invite.invite import Invite
+from ...other.widget.widget import Widget
+from ..asset import Asset
+from ...flags import SystemChannelFlags
+from ...other.integration.integrations import Integration, PartialIntegration, _integration_factory
+from ...other.scheduled_event.scheduled_event import ScheduledEvent
+from ..channel.stage_instance import StageInstance
+from ...other.threads.threads import Thread, ThreadMember
+from ...other.sticker.sticker import GuildSticker
+from ..message.file import File
+from ...other.audit_logs.audit_logs import AuditLogEntry
+from ...utils.object import OLDEST_OBJECT, Object
+from ...other.welcome_screen.welcome_screen import WelcomeScreen, WelcomeChannel
+from ...other.automod.automod import AutoModRule, AutoModTrigger, AutoModRuleAction
+from ..emoji.partial import _EmojiTag, PartialEmoji
+from ...other.soundboard.soundboard import SoundboardSound
+from ...presences import RawPresenceUpdateEvent
 
 __all__ = (
     'Guild',
@@ -106,8 +107,8 @@ __all__ = (
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .abc import Snowflake, SnowflakeTime
-    from .types.guild import (
+    from ...abc import Snowflake, SnowflakeTime
+    from ...types.guild import (
         Ban as BanPayload,
         Guild as GuildPayload,
         GuildPreview as GuildPreviewPayload,
@@ -115,17 +116,17 @@ if TYPE_CHECKING:
         GuildFeature,
         IncidentData,
     )
-    from .types.threads import (
+    from ...types.threads import (
         Thread as ThreadPayload,
     )
-    from .types.voice import GuildVoiceState
-    from .permissions import Permissions
-    from .channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel
-    from .template import Template
-    from .webhook import Webhook
-    from .state import ConnectionState
-    from .voice_client import VoiceProtocol
-    from .types.channel import (
+    from ...types.voice import GuildVoiceState
+    from ...utils.permissions import Permissions
+    from ...channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel
+    from ...other.template.template import Template
+    from ...webhook import Webhook
+    from ..state.state import ConnectionState
+    from ...voice_client import VoiceProtocol
+    from ...types.channel import (
         GuildChannel as GuildChannelPayload,
         TextChannel as TextChannelPayload,
         NewsChannel as NewsChannelPayload,
@@ -134,11 +135,13 @@ if TYPE_CHECKING:
         StageChannel as StageChannelPayload,
         ForumChannel as ForumChannelPayload,
     )
-    from .types.integration import IntegrationType
-    from .types.snowflake import SnowflakeList
-    from .types.widget import EditWidgetSettings
-    from .types.audit_log import AuditLogEvent
-    from .message import EmojiInputType
+    from .integration.types import IntegrationType
+    
+    from .widget.types import EditWidgetSettings
+    from .audit_logs.types import AuditLogEvent
+    from ..message.message import EmojiInputType
+
+    from ...utils.snowflake import SnowflakeList
 
     VocalGuildChannel = Union[VoiceChannel, StageChannel]
     GuildChannel = Union[VocalGuildChannel, ForumChannel, TextChannel, CategoryChannel]
@@ -2800,7 +2803,7 @@ class Guild(Hashable):
         List[:class:`Template`]
             The templates for this guild.
         """
-        from .template import Template
+        from ...other.template.template import Template
 
         data = await self._state.http.guild_templates(self.id)
         return [Template(data=d, state=self._state) for d in data]
@@ -2823,7 +2826,7 @@ class Guild(Hashable):
             The webhooks for this guild.
         """
 
-        from .webhook import Webhook
+        from ...webhook import Webhook
 
         data = await self._state.http.guild_webhooks(self.id)
         return [Webhook.from_state(d, state=self._state) for d in data]
@@ -2922,7 +2925,7 @@ class Guild(Hashable):
         description: :class:`str`
             The description of the template.
         """
-        from .template import Template
+        from ...other.template.template import Template
 
         payload = {'name': name}
 
@@ -4208,8 +4211,8 @@ class Guild(Hashable):
                 predicate = lambda m: int(m['id']) > after.id
 
         # avoid circular import
-        from .app_commands import AppCommand
-        from .webhook import Webhook
+        from ...app_commands import AppCommand
+        from ...webhook import Webhook
 
         while True:
             retrieve = 100 if limit is None else min(limit, 100)

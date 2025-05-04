@@ -51,25 +51,25 @@ import datetime
 
 import aiohttp
 
-from .errors import HTTPException, RateLimited, Forbidden, NotFound, LoginFailure, DiscordServerError, GatewayNotFound
-from .gateway import DiscordClientWebSocketResponse
-from .file import File
-from .mentions import AllowedMentions
-from . import __version__, utils
-from .utils import MISSING
+from ..errors import HTTPException, RateLimited, Forbidden, NotFound, LoginFailure, DiscordServerError, GatewayNotFound
+from .gateway.gateway import DiscordClientWebSocketResponse
+from .message.file import File
+from .message.mentions import AllowedMentions
+from .. import __version__, utils
+from ..utils import MISSING
 
 _log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .ui.view import View
-    from .embeds import Embed
-    from .message import Attachment
-    from .flags import MessageFlags
-    from .poll import Poll
+    from ..ui.view import View
+    from .message.embeds import Embed
+    from .message.message import Attachment
+    from .message.flags import MessageFlags
+    from .message.poll import Poll
 
-    from .types import (
+    from ..types import (
         appinfo,
         audit_log,
         automod,
@@ -96,8 +96,12 @@ if TYPE_CHECKING:
         soundboard,
         subscription,
     )
-    from .types.snowflake import Snowflake, SnowflakeList
-    from .types.gateway import SessionStartLimit
+
+    from ..core.guild.threads import Thread
+
+
+    from ..utils.snowflake import Snowflake, SnowflakeList
+    from ..types import SessionStartLimit
 
     from types import TracebackType
 
