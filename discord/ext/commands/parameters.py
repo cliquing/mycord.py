@@ -28,24 +28,18 @@ import inspect
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Literal, Optional, OrderedDict, Union, Protocol
 
-from discord.utils import MISSING, maybe_coroutine
+from ...utils.utils import MISSING, maybe_coroutine
 
 from .errors import NoPrivateMessage
 from .converter import GuildConverter
 
-from discord import (
-    Member,
-    User,
-    TextChannel,
-    VoiceChannel,
-    DMChannel,
-    Thread,
-)
+
+from ...core import Member, User, TextChannel, VoiceChannel, DMChannel, Thread
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from discord import Guild
+    from ...core import Guild
 
     from .context import Context
 

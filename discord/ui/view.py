@@ -34,7 +34,7 @@ import time
 import os
 from .item import Item, ItemCallbackType
 from .dynamic import DynamicItem
-from ..other.components.components import (
+from ..core.components.components import (
     Component,
     ActionRow as ActionRowComponent,
     _component_factory,
@@ -54,8 +54,8 @@ if TYPE_CHECKING:
     import re
 
     from ..core.interaction.interactions import Interaction
-    from ..core.message.message import Message
-    from ..other.components.types import Component as ComponentPayload
+    from ..core.message.messages import Message
+    from ..core.components.types import ComponentPayload
     from ..core.interaction.types import ModalSubmitComponentInteractionData as ModalSubmitComponentInteractionDataPayload
     from ..core.state.state import ConnectionState
     from .modal import Modal

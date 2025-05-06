@@ -26,10 +26,11 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, Dict, Generator, Generic, List, Optional, TypeVar, Union, Sequence, Type, overload
 
-import discord.abc
-import discord.utils
-from discord import Interaction, Message, Attachment, MessageType, User, PartialMessageable, Permissions, ChannelType, Thread
-from discord.context_managers import Typing
+from ... import abc
+from ...utils import utils
+from ...core import Interaction, Message, Attachment, MessageType, User, PartialMessageable, ChannelType, Thread, InteractionMessage, Member
+from ...utils.permissions import Permissions
+from ...utils.context_managers import Typing
 from .view import StringView
 
 from ._types import BotT
@@ -37,20 +38,12 @@ from ._types import BotT
 if TYPE_CHECKING:
     from typing_extensions import Self, ParamSpec, TypeGuard
 
-    from discord.abc import MessageableChannel
-    from discord.guild import Guild
-    from discord.member import Member
-    from discord.state import ConnectionState
-    from discord.user import ClientUser
-    from discord.voice_client import VoiceProtocol
-    from discord.embeds import Embed
-    from discord.file import File
-    from discord.mentions import AllowedMentions
-    from discord.sticker import GuildSticker, StickerItem
-    from discord.message import MessageReference, PartialMessage
-    from discord.ui import View
-    from discord.types.interactions import ApplicationCommandInteractionData
-    from discord.poll import Poll
+    from ...abc import MessageableChannel
+    from ...core import Member, Guild, ClientUser, Embed, File, AllowedMentions, GuildSticker, StickerItem, MessageReference, PartialMessage, ConnectionState, Poll
+    from ...core.client.voice import VoiceProtocol
+
+    from ...ui import View
+    from ...core.interaction import ApplicationCommandInteractionData
 
     from .cog import Cog
     from .core import Command
@@ -66,7 +59,7 @@ __all__ = (
 )
 # fmt: on
 
-MISSING: Any = discord.utils.MISSING
+MISSING: Any = utils.MISSING
 
 
 T = TypeVar('T')
@@ -106,14 +99,14 @@ class DeferTyping(Generic[BotT]):
         pass
 
 
-class Context(discord.abc.Messageable, Generic[BotT]):
+class Context(abc.Messageable, Generic[BotT]):
     r"""Represents the context in which a command is being invoked under.
 
     This class contains a lot of meta data to help you understand more about
     the invocation context. This class is not created manually and is instead
     passed around to commands as the first parameter.
 
-    This class implements the :class:`~discord.abc.Messageable` ABC.
+    This class implements the :class:`~abc.Messageable` ABC.
 
     Attributes
     -----------
@@ -407,7 +400,7 @@ class Context(discord.abc.Messageable, Generic[BotT]):
         """:class:`bool`: Checks if the invocation context is valid to be invoked with."""
         return self.prefix is not None and self.command is not None
 
-    async def _get_channel(self) -> discord.abc.Messageable:
+    async def _get_channel(self) -> abc.Messageable:
         return self.channel
 
     @property
@@ -441,28 +434,28 @@ class Context(discord.abc.Messageable, Generic[BotT]):
 
         .. versionadded:: 2.3
         """
-        return self.guild.filesize_limit if self.guild is not None else discord.utils.DEFAULT_FILE_SIZE_LIMIT_BYTES
+        return self.guild.filesize_limit if self.guild is not None else utils.DEFAULT_FILE_SIZE_LIMIT_BYTES
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def guild(self) -> Optional[Guild]:
         """Optional[:class:`.Guild`]: Returns the guild associated with this context's command. None if not available."""
         return self.message.guild
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def channel(self) -> MessageableChannel:
         """Union[:class:`.abc.Messageable`]: Returns the channel associated with this context's command.
         Shorthand for :attr:`.Message.channel`.
         """
         return self.message.channel
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def author(self) -> Union[User, Member]:
         """Union[:class:`~discord.User`, :class:`.Member`]:
         Returns the author associated with this context's command. Shorthand for :attr:`.Message.author`
         """
         return self.message.author
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def me(self) -> Union[Member, ClientUser]:
         """Union[:class:`.Member`, :class:`.ClientUser`]:
         Similar to :attr:`.Guild.me` except it may return the :class:`.ClientUser` in private message contexts.
@@ -470,7 +463,7 @@ class Context(discord.abc.Messageable, Generic[BotT]):
         # bot.user will never be None at this point.
         return self.guild.me if self.guild is not None else self.bot.user  # type: ignore
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def permissions(self) -> Permissions:
         """:class:`.Permissions`: Returns the resolved permissions for the invoking user in this channel.
         Shorthand for :meth:`.abc.GuildChannel.permissions_for` or :attr:`.Interaction.permissions`.
@@ -496,7 +489,7 @@ class Context(discord.abc.Messageable, Generic[BotT]):
             base.value &= ~denied.value
         return base
 
-    @discord.utils.cached_property
+    @utils.cached_property
     def bot_permissions(self) -> Permissions:
         """:class:`.Permissions`: Returns the resolved permissions for the bot in this channel.
         Shorthand for :meth:`.abc.GuildChannel.permissions_for` or :attr:`.Interaction.app_permissions`.
@@ -930,7 +923,7 @@ class Context(discord.abc.Messageable, Generic[BotT]):
 
         Sends a message to the destination with the content given.
 
-        This works similarly to :meth:`~discord.abc.Messageable.send` for non-interaction contexts.
+        This works similarly to :meth:`~abc.Messageable.send` for non-interaction contexts.
 
         For interaction based contexts this does one of the following:
 
@@ -1079,7 +1072,7 @@ class Context(discord.abc.Messageable, Generic[BotT]):
             msg = await self.interaction.followup.send(**kwargs, wait=True)
         else:
             response = await self.interaction.response.send_message(**kwargs)
-            if not isinstance(response.resource, discord.InteractionMessage):
+            if not isinstance(response.resource, InteractionMessage):
                 msg = await self.interaction.original_response()
             else:
                 msg = response.resource

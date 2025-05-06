@@ -1,7 +1,7 @@
 
-from typing import List, Union, NewType
+from typing import List, Union
 
-Snowflake = NewType('Snowflake', int)
+#Snowflake = NewType('Snowflake', int)
 
-RawSnowflake = Union[str, int]
+Snowflake = Union[str, int]
 SnowflakeList = List[Snowflake]

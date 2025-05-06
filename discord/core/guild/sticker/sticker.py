@@ -30,16 +30,18 @@ import unicodedata
 from ...asset import Asset, AssetMixin
 from ....utils.mixins import Hashable
 from ....utils.utils import cached_slot_property, snowflake_time, get, MISSING, _get_as_snowflake
-from .enums import StickerType, StickerFormatType, try_enum
+from .enums import StickerType, StickerFormatType
+from ....utils.enums import try_enum
 
-__all__ = ('StickerPack', 'StickerItem', 'Sticker', 'StandardSticker', 'GuildSticker',
+__all__ = (
+    'StickerPack', 'StickerItem', 'Sticker', 'StandardSticker', 'GuildSticker',
 )
 
 if TYPE_CHECKING:
     import datetime
     from ...state import ConnectionState
     from ...user import User
-    from ..guild import Guild
+    from ..guilds import Guild
 
     from .types import StickerPayload, StandardStickerPayload, GuildStickerPayload, StickerPackPayload, StickerItemPayload
 

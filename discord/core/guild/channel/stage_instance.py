@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from .types import StageInstancePayload
     from ...state import ConnectionState
     from ..channel import StageChannel
-    from ..guild import Guild
+    from ..guilds import Guild
     from ..scheduled_event import ScheduledEvent
 
 

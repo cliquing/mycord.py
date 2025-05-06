@@ -27,12 +27,12 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, AsyncIterator, Dict, Optional, Union, overload, Literal
 
-from ...entity.asset import Asset
-from ...defaults.mixins import Hashable
-from ...defaults.object import Object, OLDEST_OBJECT
-from ...utils import parse_time, _get_as_snowflake, _bytes_to_base64_data, MISSING
-from ...defaults.enums import try_enum
-from ...core.guild.enums import EventStatus, EntityType, PrivacyLevel
+from ...asset import Asset
+from ....utils.mixins import Hashable
+from ....utils.object import Object, OLDEST_OBJECT
+from ....utils.utils import parse_time, _get_as_snowflake, _bytes_to_base64_data, MISSING
+from ....utils.enums import try_enum
+from ...guild.enums import EventStatus, EntityType, PrivacyLevel
 
 if TYPE_CHECKING:
     from .types import (
@@ -41,11 +41,11 @@ if TYPE_CHECKING:
         EntityMetadata,
     )
 
-    from ...abc import Snowflake
-    from ...core.guild.guild import Guild
-    from ...core.channel import VoiceChannel, StageChannel
-    from ...core.state.state import ConnectionState
-    from ...core.user.user import User
+    from ....abc import Snowflake
+    from ..guilds import Guild
+    from ..channel import VoiceChannel, StageChannel
+    from ...state import ConnectionState
+    from ...user import User
 
     GuildScheduledEventPayload = Union[BaseGuildScheduledEventPayload, GuildScheduledEventWithUserCountPayload]
 

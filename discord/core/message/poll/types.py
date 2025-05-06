@@ -32,7 +32,7 @@ from ....utils.snowflake import Snowflake
 
 if TYPE_CHECKING:
     from ...user.types import UserPayload
-    from ...emoji import PartialEmoji
+    from ...emoji import PartialEmojiPayload
 
 
 LayoutType = Literal[1]  # 1 = Default
@@ -40,7 +40,7 @@ LayoutType = Literal[1]  # 1 = Default
 
 class PollMediaPayload(TypedDict):
     text: str
-    emoji: NotRequired[Optional[PartialEmoji]]
+    emoji: NotRequired[Optional[PartialEmojiPayload]]
 
 
 class PollAnswerPayload(TypedDict):

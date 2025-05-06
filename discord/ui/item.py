@@ -36,9 +36,9 @@ __all__ = (
 # fmt: on
 
 if TYPE_CHECKING:
-    from ..other.components.enums import ComponentType
+    from ..core.components.enums import ComponentType
     from .view import View
-    from ..other.components.components import Component
+    from ..core.components.components import Component
 
 I = TypeVar('I', bound='Item[Any]')
 V = TypeVar('V', bound='View', covariant=True)

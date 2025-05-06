@@ -53,14 +53,16 @@ from ..user.user import User, ClientUser
 from ..guild.invite.invite import Invite
 from ..guild.template import Template
 from ..guild.widget.widget import Widget
-from ..guild.guild import Guild, GuildPreview
+from ..guild.guilds import Guild, GuildPreview
 from ..emoji.emoji import Emoji
 from ..guild.channel import _threaded_channel_factory, PartialMessageable
-from ..guild.channel.enums import ChannelType, EntitlementOwnerType
+from ..guild.channel.enums import ChannelType
+#from ..appinfo.enums import EntitlementOwnerType
+from .sku import EntitlementOwnerType
 
 from ..message.mentions import AllowedMentions
 from ...errors import *
-from ..user.enums import Status
+from ..client import StatusType
 from ..gateway.flags import Intents
 from ..appinfo.flags import ApplicationFlags
 from ..appinfo import AppInfo
@@ -72,7 +74,7 @@ from ..state.state import ConnectionState
 from ...utils import utils
 from ...utils import MISSING, time_snowflake
 from ...utils.object import Object
-from ...other.backoff import ExponentialBackoff
+from ...utils.backoff import ExponentialBackoff
 from ..webhook import Webhook
 
 from ...ui.view import View
@@ -88,24 +90,24 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     from ...abc import Messageable, PrivateChannel, Snowflake, SnowflakeTime
-    from ...app_commands import Command, ContextMenu
+    from ...commands import Command, ContextMenu
     from ..guild.automod.automod import AutoModAction, AutoModRule
     from ..guild.channel import DMChannel, GroupChannel
     from ...ext.commands import AutoShardedBot, Bot, Context, CommandError
-    from ..guild.guild import GuildChannel
+    from ..guild.guilds import GuildChannel
     from ..guild.integration import Integration
     from ..interaction.interactions import Interaction
     from ..guild.member import Member, VoiceState
-    from ..message.message import Message
+    from ..message import Message
     from ..appinfo.raw_models import RawAppCommandPermissionsUpdateEvent
-    from ..message.raw_models import RawBulkMessageDeleteEvent, RawMessageDeleteEvent, RawMessageUpdateEvent
+    from ..message.raw_models import RawMessageDeleteBulkEvent, RawMessageDeleteEvent, RawMessageUpdateEvent
     from ..guild.integration.raw_models import RawIntegrationDeleteEvent
     from ..message.reaction.raw_models import RawReactionActionEvent, RawReactionClearEmojiEvent, RawReactionClearEvent
     from ..guild.threads.raw_models import RawThreadDeleteEvent, RawThreadUpdateEvent, RawThreadMembersUpdate
     
     from ..guild.member.raw_models import RawMemberRemoveEvent
     
-    from .raw_models import RawTypingEvent, RawPresenceUpdateEvent
+    from .raw_models import RawTypingEvent
     from ..message.poll.raw_models import RawPollVoteActionEvent
     from ..message.reaction import Reaction
     from ..guild.role import Role
@@ -931,21 +933,21 @@ class Client:
             raise TypeError('activity must derive from BaseActivity.')
 
     @property
-    def status(self) -> Status:
+    def status(self) -> StatusType:
         """:class:`.Status`:
         The status being used upon logging on to Discord.
 
         .. versionadded: 2.0
         """
-        if self._connection._status in set(state.value for state in Status):
-            return Status(self._connection._status)
-        return Status.online
+        if self._connection._status in set(state.value for state in StatusType):
+            return StatusType(self._connection._status)
+        return StatusType.online
 
     @status.setter
-    def status(self, value: Status) -> None:
-        if value is Status.offline:
+    def status(self, value: StatusType) -> None:
+        if value is StatusType.offline:
             self._connection._status = 'invisible'
-        elif isinstance(value, Status):
+        elif isinstance(value, StatusType):
             self._connection._status = str(value)
         else:
             raise TypeError('status must derive from Status.')
@@ -1655,9 +1657,9 @@ class Client:
         event: Literal['raw_bulk_message_delete'],
         /,
         *,
-        check: Optional[Callable[[RawBulkMessageDeleteEvent], bool]] = ...,
+        check: Optional[Callable[[RawMessageDeleteBulkEvent], bool]] = ...,
         timeout: Optional[float] = ...,
-    ) -> RawBulkMessageDeleteEvent:
+    ) -> RawMessageDeleteBulkEvent:
         ...
 
     # Reactions
@@ -2101,7 +2103,7 @@ class Client:
         self,
         *,
         activity: Optional[BaseActivity] = None,
-        status: Optional[Status] = None,
+        status: Optional[StatusType] = None,
     ) -> None:
         """|coro|
 
@@ -2138,10 +2140,10 @@ class Client:
 
         if status is None:
             status_str = 'online'
-            status = Status.online
-        elif status is Status.offline:
+            status = StatusType.online
+        elif status is StatusType.offline:
             status_str = 'invisible'
-            status = Status.offline
+            status = StatusType.offline
         else:
             status_str = str(status)
 

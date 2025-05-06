@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
+from typing import TYPE_CHECKING, List
 
 
-from ...utils.utils import _get_as_snowflake, _RawReprMixin
-from ...app_commands import AppCommandPermissions
+from ...utils.utils import _RawReprMixin
+from ...commands import AppCommandPermissions
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
 
     from ...types.command import GuildApplicationCommandPermissions
 
     from ...core.state import ConnectionState
 
-    from ...core.guild.guild import Guild
+    from ..guild import Guild
 
 
 __all__ = ('RawAppCommandPermissionsUpdateEvent',

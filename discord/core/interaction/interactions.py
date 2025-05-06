@@ -37,18 +37,18 @@ from ...errors import InteractionResponded, HTTPException, ClientException, Disc
 from ..message.flags import MessageFlags
 from ..guild.channel import ChannelType
 from ..._types import ClientT
-from ...other.sku.sku import Entitlement
+from ..client.sku.skus import Entitlement
 from ...utils.enums import try_enum, Locale
 
 from ..user.user import User
 from ..guild.member import Member
-from ..message.message import Message, Attachment
+from ..message.messages import Message, Attachment
 from ...utils.permissions import Permissions
 from ..http import handle_message_parameters
 from ..webhook.async_ import async_context, Webhook, interaction_response_params, interaction_message_response_params
-from ...app_commands.installs import AppCommandContext
-from ...app_commands.namespace import Namespace
-from ...app_commands.translator import locale_str, TranslationContext, TranslationContextLocation
+from ...commands.installs import AppCommandContext
+from ...commands.namespace import Namespace
+from ...commands.translator import locale_str, TranslationContext, TranslationContextLocation
 from ..guild.channel import _threaded_channel_factory
 
 __all__ = ('Interaction', 'InteractionMessage', 'InteractionResponse',
@@ -58,26 +58,26 @@ __all__ = ('Interaction', 'InteractionMessage', 'InteractionResponse',
 
 if TYPE_CHECKING:
     from .types import (
-        Interaction as InteractionPayload,
+        InteractionPayload,
         InteractionData,
         ApplicationCommandInteractionData,
         InteractionCallbackPayload,
         InteractionCallbackActivityPayload,
     )
-    from ..webhook.types import Webhook as WebhookPayload
+    from ..webhook.types import WebhookPayload
     from ...utils.snowflake import Snowflake
-    from ..guild.guild import Guild
+    from ..guild import Guild
     from ..state.state import ConnectionState
     from ..message.file import File
     from ..message.mentions import AllowedMentions
     from aiohttp import ClientSession
     from ..message.embeds import Embed
     from ...ui.view import View
-    from ...app_commands.models import Choice, ChoiceT
+    from ...commands.models import Choice, ChoiceT
     from ...ui.modal import Modal
     from ..guild.channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel, DMChannel, GroupChannel
     from ..guild.threads.threads import Thread
-    from ...app_commands.commands import Command, ContextMenu
+    from ...commands.commands import Command, ContextMenu
     from ..message.poll import Poll
 
     InteractionChannel = Union[

@@ -3,8 +3,8 @@ from typing_extensions import NotRequired
 
 from ...user.types import PartialUserPayload
 from ....utils.snowflake import Snowflake
-from ..threads import ThreadMetadata, ThreadMember, ThreadArchiveDuration, ThreadType
-from ...emoji import PartialEmoji
+from ..threads import ThreadMetadata, ThreadMemberPayload, ThreadArchiveDuration, ThreadType
+from ...emoji import PartialEmojiPayload
 
 
 OverwriteType = Literal[0, 1]
@@ -18,7 +18,7 @@ class PermissionOverwritePayload(TypedDict):
 
 
 ChannelTypeWithoutThread = Literal[0, 1, 2, 3, 4, 5, 6, 13, 15, 16]
-ChannelType = Union[ChannelTypeWithoutThread, ThreadType]
+ChannelTypes = Union[ChannelTypeWithoutThread, ThreadType]
 
 
 class _BaseChannel(TypedDict):
@@ -35,7 +35,7 @@ class _BaseGuildChannel(_BaseChannel):
 
 
 class PartialChannelPayload(_BaseChannel):
-    type: ChannelType
+    type: ChannelTypes
 
 
 class _BaseTextChannel(_BaseGuildChannel, total=False):
@@ -66,13 +66,14 @@ class VoiceChannelPayload(_BaseTextChannel):
     video_quality_mode: NotRequired[VideoQualityMode]
 
 
-VoiceChannelEffectAnimationType = Literal[0, 1]
+VoiceChannelEffectAnimationTypes = Literal[0, 1]
+
 class VoiceChannelEffectPayload(TypedDict):
     guild_id: Snowflake
     channel_id: Snowflake
     user_id: Snowflake
-    emoji: NotRequired[Optional[PartialEmoji]]
-    animation_type: NotRequired[VoiceChannelEffectAnimationType]
+    emoji: NotRequired[Optional[PartialEmojiPayload]]
+    animation_type: NotRequired[VoiceChannelEffectAnimationTypes]
     animation_id: NotRequired[int]
     sound_id: NotRequired[Union[int, str]]
     sound_volume: NotRequired[float]
@@ -101,7 +102,7 @@ class ThreadChannelPayload(_BaseChannel):
     message_count: int
     member_count: int
     thread_metadata: ThreadMetadata
-    member: NotRequired[ThreadMember]
+    member: NotRequired[ThreadMemberPayload]
     owner_id: NotRequired[Snowflake]
     rate_limit_per_user: NotRequired[int]
     last_message_id: NotRequired[Optional[Snowflake]]
@@ -123,14 +124,14 @@ class ForumTagPayload(TypedDict):
     emoji_name: Optional[str]
 
 
-ForumOrderType = Literal[0, 1]
+ForumOrderTypes = Literal[0, 1]
 ForumLayoutType = Literal[0, 1, 2]
 
 
 class _BaseForumChannel(_BaseTextChannel):
     available_tags: List[ForumTagPayload]
     default_reaction_emoji: Optional[DefaultReactionPayload]
-    default_sort_order: Optional[ForumOrderType]
+    default_sort_order: Optional[ForumOrderTypes]
     default_forum_layout: NotRequired[ForumLayoutType]
     flags: NotRequired[int]
 
@@ -182,3 +183,27 @@ class StageInstancePayload(TypedDict):
     privacy_level: PrivacyLevel
     discoverable_disabled: bool
     guild_scheduled_event_id: Optional[int]
+
+
+#---
+
+class _ChannelEvent(TypedDict):
+    id: Snowflake
+    type: ChannelTypes
+
+
+ChannelCreateEvent = ChannelUpdateEvent = ChannelDeleteEvent = _ChannelEvent
+
+
+class ChannelPinsUpdateEvent(TypedDict):
+    channel_id: Snowflake
+    guild_id: NotRequired[Snowflake]
+    last_pin_timestamp: NotRequired[Optional[str]]
+
+
+StageInstanceCreateEvent = StageInstanceUpdateEvent = StageInstanceDeleteEvent = StageInstancePayload
+
+
+
+
+VoiceChannelEffectSendEvent = VoiceChannelEffectPayload

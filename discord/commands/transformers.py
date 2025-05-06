@@ -50,15 +50,17 @@ from .models import AppCommandChannel, AppCommandThread, Choice
 from .translator import TranslationContextLocation, TranslationContext, Translator, locale_str
 from ..core.guild.channel import StageChannel, VoiceChannel, TextChannel, CategoryChannel, ForumChannel
 from ..abc import GuildChannel
-from ..other.threads.threads import Thread
-from ..enums import Enum as InternalEnum, AppCommandOptionType, ChannelType, Locale
+from ..core.guild.channel.enums import ChannelType
+from ..core.guild.threads import Thread
+from ..core.appinfo import AppCommandOptionType
+from ..utils.enums import Locale#, #InternalEnum
 from ..utils import MISSING, maybe_coroutine
 from ..core.user.user import User
-from ..role import Role
-from ..core.member.member import Member
-from ..core.message.message import Attachment
+from ..core.guild.role import Role
+from ..core.guild.member import Member
+from ..core.message.messages import Attachment
 from .._types import ClientT
-
+from ..utils.enums import Enum as InternalEnum
 __all__ = (
     'Transformer',
     'Transform',
@@ -760,7 +762,7 @@ def get_supported_annotation(
     if inspect.isclass(annotation):
         if issubclass(annotation, Transformer):
             return (annotation(), MISSING, False)
-        if issubclass(annotation, (Enum, InternalEnum)):
+        if issubclass(annotation, (Enum, InternalEnum)): # type: ignore
             if all(isinstance(v.value, (str, int, float)) for v in annotation):
                 return (EnumValueTransformer(annotation), MISSING, False)
             else:

@@ -1,15 +1,13 @@
 
 from __future__ import annotations
 
-import datetime
-from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
+from typing import TYPE_CHECKING, Union
 
-from ....utils.utils import _get_as_snowflake, _RawReprMixin
+from ....utils.utils import _RawReprMixin
 
 
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
 
     from ..member.member import Member
     #from .types import ThreadPayload

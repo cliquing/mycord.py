@@ -50,10 +50,12 @@ from typing import (
     overload,
 )
 
-import discord
-from discord import app_commands
-from discord.app_commands.tree import _retrieve_guild_ids
-from discord.utils import MISSING, _is_submodule
+from ...core.client.shard import AutoShardedClient
+
+from ...core.appinfo import AppInfo, TeamMemberRole
+from ...core.client import Client
+
+from ...commands.tree import _retrieve_guild_ids
 
 from .core import GroupMixin
 from .view import StringView
@@ -63,14 +65,18 @@ from .help import HelpCommand, DefaultHelpCommand
 from .cog import Cog
 from .hybrid import hybrid_command, hybrid_group, HybridCommand, HybridGroup
 
+from ...utils import utils
+from ...utils.object import Object
+from ...errors import ClientException
+from ... import commands as app_commands
+from ...utils.utils import MISSING, _is_submodule
+
 if TYPE_CHECKING:
     from typing_extensions import Self
-
     import importlib.machinery
 
-    from discord.message import Message
-    from discord.interactions import Interaction
-    from discord.abc import User, Snowflake
+    from ...core import Message, Interaction
+    from ...abc import User, Snowflake
     from ._types import (
         _Bot,
         BotT,
@@ -157,6 +163,7 @@ class _DefaultRepr:
 
 _default: Any = _DefaultRepr()
 
+from ...core.gateway import Intents
 
 class BotBase(GroupMixin[None]):
     def __init__(
@@ -168,7 +175,7 @@ class BotBase(GroupMixin[None]):
         description: Optional[str] = None,
         allowed_contexts: app_commands.AppCommandContext = MISSING,
         allowed_installs: app_commands.AppInstallationType = MISSING,
-        intents: discord.Intents,
+        intents: Intents,
         **options: Any,
     ) -> None:
         super().__init__(intents=intents, **options)
@@ -230,7 +237,7 @@ class BotBase(GroupMixin[None]):
         for event in self.extra_events.get(ev, []):
             self._schedule_event(event, ev, *args, **kwargs)  # type: ignore
 
-    @discord.utils.copy_doc(discord.Client.close)
+    @utils.copy_doc(Client.close)
     async def close(self) -> None:
         for extension in tuple(self.__extensions):
             try:
@@ -248,7 +255,7 @@ class BotBase(GroupMixin[None]):
 
     # GroupMixin overrides
 
-    @discord.utils.copy_doc(GroupMixin.add_command)
+    @utils.copy_doc(GroupMixin.add_command)
     def add_command(self, command: Command[Any, ..., Any], /) -> None:
         super().add_command(command)
         if isinstance(command, (HybridCommand, HybridGroup)) and command.app_command:
@@ -259,7 +266,7 @@ class BotBase(GroupMixin[None]):
             if command.cog is None or not command.cog.__cog_is_app_commands_group__:
                 self.tree.add_command(command.app_command)
 
-    @discord.utils.copy_doc(GroupMixin.remove_command)
+    @utils.copy_doc(GroupMixin.remove_command)
     def remove_command(self, name: str, /) -> Optional[Command[Any, ..., Any]]:
         cmd: Optional[Command[Any, ..., Any]] = super().remove_command(name)
         if isinstance(cmd, (HybridCommand, HybridGroup)) and cmd.app_command:
@@ -272,7 +279,7 @@ class BotBase(GroupMixin[None]):
                 self.__tree.remove_command(name)
             else:
                 for guild_id in guild_ids:
-                    self.__tree.remove_command(name, guild=discord.Object(id=guild_id))
+                    self.__tree.remove_command(name, guild=Object(id=guild_id))
 
         return cmd
 
@@ -487,7 +494,7 @@ class BotBase(GroupMixin[None]):
         if len(data) == 0:
             return True
 
-        return await discord.utils.async_all(f(ctx) for f in data)  # type: ignore
+        return await utils.async_all(f(ctx) for f in data)  # type: ignore
 
     async def is_owner(self, user: User, /) -> bool:
         """|coro|
@@ -528,12 +535,12 @@ class BotBase(GroupMixin[None]):
         elif self.owner_ids:
             return user.id in self.owner_ids
         else:
-            app: discord.AppInfo = await self.application_info()  # type: ignore
+            app: AppInfo = await self.application_info()  # type: ignore
             if app.team:
                 self.owner_ids = ids = {
                     m.id
                     for m in app.team.members
-                    if m.role in (discord.TeamMemberRole.admin, discord.TeamMemberRole.developer)
+                    if m.role in (TeamMemberRole.admin, TeamMemberRole.developer)
                 }
                 return user.id in ids
             else:
@@ -790,7 +797,7 @@ class BotBase(GroupMixin[None]):
 
         if existing is not None:
             if not override:
-                raise discord.ClientException(f'Cog named {cog_name!r} already loaded')
+                raise ClientException(f'Cog named {cog_name!r} already loaded')
             await self.remove_cog(cog_name, guild=guild, guilds=guilds)
 
         if cog.__cog_app_commands_group__:
@@ -885,7 +892,7 @@ class BotBase(GroupMixin[None]):
                 self.__tree.remove_command(name)
             else:
                 for guild_id in guild_ids:
-                    self.__tree.remove_command(name, guild=discord.Object(guild_id))
+                    self.__tree.remove_command(name, guild=Object(guild_id))
 
         await cog._eject(self, guild_ids=guild_ids)
 
@@ -1209,7 +1216,7 @@ class BotBase(GroupMixin[None]):
 
         if callable(prefix):
             # self will be a Bot or AutoShardedBot
-            ret = await discord.utils.maybe_coroutine(prefix, self, message)  # type: ignore
+            ret = await utils.maybe_coroutine(prefix, self, message)  # type: ignore
 
         if not isinstance(ret, str):
             try:
@@ -1293,7 +1300,7 @@ class BotBase(GroupMixin[None]):
         if cls is MISSING:
             cls = Context  # type: ignore
 
-        if isinstance(origin, discord.Interaction):
+        if isinstance(origin, Interaction):
             return await cls.from_interaction(origin)
 
         view = StringView(origin.content)
@@ -1313,7 +1320,7 @@ class BotBase(GroupMixin[None]):
                 # if the context class' __init__ consumes something from the view this
                 # will be wrong.  That seems unreasonable though.
                 if origin.content.startswith(tuple(prefix)):
-                    invoked_prefix = discord.utils.find(view.skip_string, prefix)
+                    invoked_prefix = utils.find(view.skip_string, prefix)
                 else:
                     return ctx
 
@@ -1411,17 +1418,17 @@ class BotBase(GroupMixin[None]):
         await self.process_commands(message)
 
 
-class Bot(BotBase, discord.Client):
+class Bot(BotBase, Client):
     """Represents a Discord bot.
 
-    This class is a subclass of :class:`discord.Client` and as a result
-    anything that you can do with a :class:`discord.Client` you can do with
+    This class is a subclass of :class:`Client` and as a result
+    anything that you can do with a :class:`Client` you can do with
     this bot.
 
     This class also subclasses :class:`.GroupMixin` to provide the functionality
     to manage commands.
 
-    Unlike :class:`discord.Client`, this class does not require manually setting
+    Unlike :class:`Client`, this class does not require manually setting
     a :class:`~discord.app_commands.CommandTree` and is automatically set upon
     instantiating the class.
 
@@ -1514,7 +1521,7 @@ class Bot(BotBase, discord.Client):
     pass
 
 
-class AutoShardedBot(BotBase, discord.AutoShardedClient):
+class AutoShardedBot(BotBase, AutoShardedClient):
     """This is similar to :class:`.Bot` except that it is inherited from
     :class:`discord.AutoShardedClient` instead.
 

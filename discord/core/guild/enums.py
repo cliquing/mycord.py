@@ -77,3 +77,4 @@ class EntityType(Enum):
     stage_instance = 1
     voice = 2
     external = 3
+

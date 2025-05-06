@@ -50,4 +50,9 @@ class EntitlementPayload(TypedDict):
     consumed: NotRequired[bool]
 
 
-EntitlementOwnerType = Literal[1, 2]
+EntitlementOwnerTypes = Literal[1, 2]
+
+
+EntitlementCreateEvent = EntitlementUpdateEvent = EntitlementDeleteEvent = EntitlementPayload
+
+

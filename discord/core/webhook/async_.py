@@ -37,19 +37,19 @@ import aiohttp
 
 from ...utils import utils
 from ...errors import HTTPException, Forbidden, NotFound, DiscordServerError
-from ...core.message.message import Message
+from ..message.messages import Message
 from ...core.user.user import BaseUser, User
 from ...core.user import DefaultAvatar
 from ..guild.channel.enums import ChannelType
 from ...core.webhook import WebhookType
 from ...core.message.flags import MessageFlags
-from ...entity import Asset
+from ..asset import Asset
 from ..emoji.partial import PartialEmoji
 from ..http import Route, handle_message_parameters, MultipartParameters, HTTPClient, json_or_text
 from ...utils.mixins import Hashable
 from ..guild.channel import TextChannel, ForumChannel, PartialMessageable, ForumTag
-from ...entity import File
-from ...core.message.message import PartialMessageable
+from ..message.file import File
+from ..message.messages import PartialMessageable
 from ...utils.enums import try_enum
 __all__ = (
     'Webhook',
@@ -67,10 +67,10 @@ if TYPE_CHECKING:
     from ..message.embeds import Embed
     from ...core.client.client import Client
     from ...core.message.mentions import AllowedMentions
-    from ...core.message.message import Attachment
+    from ..message.messages import Attachment
     from ...core.state.state import ConnectionState
     from ..http import Response
-    from ...core.guild.guild import Guild
+    from ..guild import Guild
     from ...core.emoji.emoji import Emoji
     from ..guild.channel import VoiceChannel
     from ...abc import Snowflake
@@ -86,7 +86,7 @@ if TYPE_CHECKING:
     from ..guild.channel.types import PartialChannelPayload
     from ...core.emoji.types import PartialEmojiPayload
     from ...utils.snowflake import SnowflakeList
-    from ..interaction.types import InteractionCallbackPayload as InteractionCallbackResponsePayload
+    from ..interaction.types import InteractionCallbackPayload
 
 
     BE = TypeVar('BE', bound=BaseException)
@@ -433,7 +433,7 @@ class AsyncWebhookAdapter:
         proxy: Optional[str] = None,
         proxy_auth: Optional[aiohttp.BasicAuth] = None,
         params: MultipartParameters,
-    ) -> Response[InteractionCallbackResponsePayload]:
+    ) -> Response[InteractionCallbackPayload]:
         route = Route(
             'POST',
             '/interactions/{webhook_id}/{webhook_token}/callback',

@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Any, Optional, TYPE_CHECKING, List
 from ....utils.utils import parse_time, _bytes_to_base64_data, MISSING
-from ..guild import Guild
+from ..guilds import Guild
 
 # fmt: off
 __all__ = (
@@ -36,9 +36,9 @@ __all__ = (
 
 if TYPE_CHECKING:
     import datetime
-    from .types import Template as TemplatePayload
+    from .types import TemplatePayload
     from ...state import ConnectionState
-    from ...user.user import User
+    from ...user import User
 
 
 class _FriendlyHttpAttributeErrorHelper:

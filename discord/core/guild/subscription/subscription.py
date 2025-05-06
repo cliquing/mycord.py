@@ -29,7 +29,7 @@ from typing import List, Optional, TYPE_CHECKING
 
 from ....utils import utils
 from ....utils.mixins import Hashable
-from ....utils import try_enum
+from ....utils.enums import try_enum
 from .enums import SubscriptionStatus
 
 if TYPE_CHECKING:

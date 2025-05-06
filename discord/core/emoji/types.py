@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from typing import Optional, TypedDict
 from typing_extensions import NotRequired
-from ..user import User
+from ..user import UserPayload
 from ...utils.snowflake import Snowflake, SnowflakeList
 
 
@@ -36,7 +36,7 @@ class PartialEmojiPayload(TypedDict):
 
 class EmojiPayload(PartialEmojiPayload, total=False):
     roles: SnowflakeList
-    user: User
+    user: UserPayload
     require_colons: bool
     managed: bool
     animated: bool

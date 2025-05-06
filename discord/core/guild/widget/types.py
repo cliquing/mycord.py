@@ -25,16 +25,16 @@ DEALINGS IN THE SOFTWARE.
 from typing import List, Optional, TypedDict
 from ...client.activity.types import ActivityPayload
 from ....utils.snowflake import Snowflake
-from ...user import User
+from ...user import UserPayload
 
 
-class WidgetChannel(TypedDict):
+class WidgetChannelPayload(TypedDict):
     id: Snowflake
     name: str
     position: int
 
 
-class WidgetMember(User, total=False):
+class WidgetMemberPayload(UserPayload, total=False):
     nick: str
     game: ActivityPayload
     status: str
@@ -46,20 +46,20 @@ class WidgetMember(User, total=False):
     suppress: bool
 
 
-class Widget(TypedDict):
+class WidgetPayload(TypedDict):
     id: Snowflake
     name: str
     instant_invite: Optional[str]
-    channels: List[WidgetChannel]
-    members: List[WidgetMember]
+    channels: List[WidgetChannelPayload]
+    members: List[WidgetMemberPayload]
     presence_count: int
 
 
-class WidgetSettings(TypedDict):
+class WidgetSettingsPayload(TypedDict):
     enabled: bool
     channel_id: Optional[Snowflake]
 
 
-class EditWidgetSettings(TypedDict, total=False):
+class EditWidgetSettingsPayload(TypedDict, total=False):
     enabled: bool
     channel_id: Optional[Snowflake]

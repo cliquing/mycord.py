@@ -38,7 +38,7 @@ from ...guild.subscription import Subscription
 
 if TYPE_CHECKING:
     from ....abc import SnowflakeTime, Snowflake
-    from ...guild.guild import Guild
+    from ...guild import Guild
     from ...state.state import ConnectionState
     from .types import SKUPayload, EntitlementPayload
     

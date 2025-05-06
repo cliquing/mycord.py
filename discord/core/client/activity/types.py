@@ -29,23 +29,19 @@ from typing_extensions import NotRequired
 from ...user.types import UserPayload
 from ....utils.snowflake import Snowflake
 
-
-StatusType = Literal['idle', 'dnd', 'online', 'offline']
+from..types import ClientStatusPayload, StatusTypes
 
 
 class PartialPresenceUpdate(TypedDict):
     user: UserPayload
     guild_id: Snowflake
-    status: StatusType
+    status: StatusTypes
     activities: List[ActivityPayload]
     client_status: ClientStatusPayload
     
 PresenceUpdateEvent = PartialPresenceUpdate
 
-class ClientStatusPayload(TypedDict, total=False):
-    desktop: StatusType
-    mobile: StatusType
-    web: StatusType
+
 
 
 class ActivityTimestamps(TypedDict, total=False):
@@ -77,12 +73,12 @@ class ActivityEmoji(TypedDict):
     animated: NotRequired[bool]
 
 
-ActivityType = Literal[0, 1, 2, 4, 5]
+ActivityTypes = Literal[0, 1, 2, 4, 5]
 
 
 class SendableActivity(TypedDict):
     name: str
-    type: ActivityType
+    type: ActivityTypes
     url: NotRequired[Optional[str]]
 
 
@@ -105,3 +101,6 @@ class ActivityPayload(_BaseActivity, total=False):
     instance: bool
     buttons: List[str]
     sync_id: str
+
+
+

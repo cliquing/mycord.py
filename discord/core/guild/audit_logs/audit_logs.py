@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Mapping, Generator, List, Optional, Tuple, Type, TypeVar, Union
 
-from ... import enums, flags, utils
+from ....utils import utils
 from ...asset import Asset
 from ....utils.color import Colour
 from ..invite import Invite
@@ -44,10 +44,20 @@ from ..threads.threads import Thread
 from ..integration.integrations import PartialIntegration
 from ..channel import ForumChannel, StageChannel, ForumTag
 
-__all__ = (
-    'AuditLogDiff',
-    'AuditLogChanges',
-    'AuditLogEntry',
+from .enums import AuditLogAction, AuditLogActionCategory
+
+from ..enums import VerificationLevel, PrivacyLevel, NotificationLevel, ContentFilter, MFALevel, EventStatus, EntityType, ExpireBehavior
+from ..channel.flags import SystemChannelFlags, ChannelFlags
+from ..channel.enums import VideoQualityMode, ChannelType
+from ..sticker.enums import StickerFormatType, StickerType
+from ....utils.enums import Locale
+from ..automod.enums import AutoModRuleTriggerType, AutoModRuleEventType
+from ...webhook.enums import WebhookType
+
+from ....utils.enums import Enum, try_enum
+from ....utils.flags import BaseFlags
+
+__all__ = ('AuditLogDiff', 'AuditLogChanges', 'AuditLogEntry',
 )
 
 
@@ -59,40 +69,29 @@ if TYPE_CHECKING:
     from ...state import ConnectionState
     from .types import (
         AuditLogChange as AuditLogChangePayload,
-        AuditLogEntry as AuditLogEntryPayload,
+        AuditLogEntryPayload,
         _AuditLogChange_TriggerMetadata as AuditLogChangeTriggerMetadataPayload,
     )
-    from ..channel.types import (PermissionOverwritePayload, ForumTagPayload, DefaultReaction as DefaultReactionPayload)
+    from ..channel.types import (PermissionOverwritePayload, ForumTagPayload, DefaultReactionPayload)
     from ..invite.types import InvitePayload
     from ..role.types import RolePayload
     from ....utils.snowflake import Snowflake
     from ....types.command import ApplicationCommandPermissions
     from ..automod.types import AutoModerationAction
     from ...user.user import User
-    from ....app_commands import AppCommand
+    from ....commands import AppCommand
     from ...webhook import Webhook
 
-    TargetType = Union[
-        Guild,
+    TargetType = Union[Guild,
         abc.GuildChannel,
-        Member,
-        User,
-        Role,
-        Invite,
-        Emoji,
-        StageInstance,
-        GuildSticker,
-        Thread,
-        Object,
-        PartialIntegration,
-        AutoModRule,
-        ScheduledEvent,
-        Webhook,
+        Member, User, Role, Invite, Emoji, StageInstance, GuildSticker, Thread,
+        Object, PartialIntegration,
+        AutoModRule, ScheduledEvent, Webhook,
         AppCommand,
         None,
     ]
 
-from . import enums, flags
+#from . import enums, flags
 
 
 def _transform_timestamp(entry: AuditLogEntry, data: Optional[str]) -> Optional[datetime.datetime]:
@@ -142,21 +141,21 @@ def _transform_applied_forum_tags(entry: AuditLogEntry, data: List[Snowflake]) -
     return [Object(id=tag_id, type=ForumTag) for tag_id in data]
 
 
-def _transform_overloaded_flags(entry: AuditLogEntry, data: int) -> Union[int, flags.ChannelFlags]:
+def _transform_overloaded_flags(entry: AuditLogEntry, data: int) -> Union[int, ChannelFlags]:
     # The `flags` key is definitely overloaded. Right now it's for channels and threads but
     # I am aware of `member.flags` and `user.flags` existing. However, this does not impact audit logs
     # at the moment but better safe than sorry.
     channel_audit_log_types = (
-        enums.AuditLogAction.channel_create,
-        enums.AuditLogAction.channel_update,
-        enums.AuditLogAction.channel_delete,
-        enums.AuditLogAction.thread_create,
-        enums.AuditLogAction.thread_update,
-        enums.AuditLogAction.thread_delete,
+        AuditLogAction.channel_create,
+        AuditLogAction.channel_update,
+        AuditLogAction.channel_delete,
+        AuditLogAction.thread_create,
+        AuditLogAction.thread_update,
+        AuditLogAction.thread_delete,
     )
 
     if entry.action in channel_audit_log_types:
-        return flags.ChannelFlags._from_value(data)
+        return ChannelFlags._from_value(data)
     return data
 
 
@@ -201,7 +200,7 @@ def _transform_overwrites(
 def _transform_icon(entry: AuditLogEntry, data: Optional[str]) -> Optional[Asset]:
     if data is None:
         return None
-    if entry.action is enums.AuditLogAction.guild_update:
+    if entry.action is AuditLogAction.guild_update:
         return Asset._from_guild_icon(entry._state, entry.guild.id, data)
     else:
         return Asset._from_icon(entry._state, entry._target_id, data, path='role')  # type: ignore # target_id won't be None in this case
@@ -236,17 +235,17 @@ def _transform_default_emoji(entry: AuditLogEntry, data: str) -> PartialEmoji:
     return PartialEmoji(name=data)
 
 
-E = TypeVar('E', bound=enums.Enum)
+E = TypeVar('E', bound=Enum)
 
 
 def _enum_transformer(enum: Type[E]) -> Callable[[AuditLogEntry, int], E]:
     def _transform(entry: AuditLogEntry, data: int) -> E:
-        return enums.try_enum(enum, data)
+        return try_enum(enum, data)
 
     return _transform
 
 
-F = TypeVar('F', bound=flags.BaseFlags)
+F = TypeVar('F', bound=BaseFlags)
 
 
 def _flag_transformer(cls: Type[F]) -> Callable[[AuditLogEntry, Union[int, str]], F]:
@@ -258,15 +257,15 @@ def _flag_transformer(cls: Type[F]) -> Callable[[AuditLogEntry, Union[int, str]]
 
 def _transform_type(
     entry: AuditLogEntry, data: Union[int, str]
-) -> Union[enums.ChannelType, enums.StickerType, enums.WebhookType, str]:
+) -> Union[ChannelType, StickerType, WebhookType, str]:
     if entry.action.name.startswith('sticker_'):
-        return enums.try_enum(enums.StickerType, data)
+        return try_enum(StickerType, data)
     elif entry.action.name.startswith('integration_'):
         return data  # type: ignore  # integration type is str
     elif entry.action.name.startswith('webhook_'):
-        return enums.try_enum(enums.WebhookType, data)
+        return try_enum(WebhookType, data)
     else:
-        return enums.try_enum(enums.ChannelType, data)
+        return try_enum(ChannelType, data)
 
 
 class AuditLogDiff:
@@ -295,8 +294,8 @@ Transformer = Callable[["AuditLogEntry", Any], Any]
 class AuditLogChanges:
     # fmt: off
     TRANSFORMERS: ClassVar[Mapping[str, Tuple[Optional[str], Optional[Transformer]]]] = {
-        'verification_level':                    (None, _enum_transformer(enums.VerificationLevel)),
-        'explicit_content_filter':               (None, _enum_transformer(enums.ContentFilter)),
+        'verification_level':                    (None, _enum_transformer(VerificationLevel)),
+        'explicit_content_filter':               (None, _enum_transformer(ContentFilter)),
         'allow':                                 (None, _flag_transformer(Permissions)),
         'deny':                                  (None, _flag_transformer(Permissions)),
         'permissions':                           (None, _flag_transformer(Permissions)),
@@ -307,7 +306,7 @@ class AuditLogChanges:
         'channel_id':                            ('channel', _transform_channel),
         'afk_channel_id':                        ('afk_channel', _transform_channel),
         'system_channel_id':                     ('system_channel', _transform_channel),
-        'system_channel_flags':                  (None, _flag_transformer(flags.SystemChannelFlags)),
+        'system_channel_flags':                  (None, _flag_transformer(SystemChannelFlags)),
         'widget_channel_id':                     ('widget_channel', _transform_channel),
         'rules_channel_id':                      ('rules_channel', _transform_channel),
         'public_updates_channel_id':             ('public_updates_channel', _transform_channel),
@@ -321,20 +320,20 @@ class AuditLogChanges:
         'default_thread_rate_limit_per_user':    ('default_thread_slowmode_delay', None),
         'guild_id':                              ('guild', _transform_guild_id),
         'tags':                                  ('emoji', None),
-        'default_message_notifications':         ('default_notifications', _enum_transformer(enums.NotificationLevel)),
-        'video_quality_mode':                    (None, _enum_transformer(enums.VideoQualityMode)),
-        'privacy_level':                         (None, _enum_transformer(enums.PrivacyLevel)),
-        'format_type':                           (None, _enum_transformer(enums.StickerFormatType)),
+        'default_message_notifications':         ('default_notifications', _enum_transformer(NotificationLevel)),
+        'video_quality_mode':                    (None, _enum_transformer(VideoQualityMode)),
+        'privacy_level':                         (None, _enum_transformer(PrivacyLevel)),
+        'format_type':                           (None, _enum_transformer(StickerFormatType)),
         'type':                                  (None, _transform_type),
         'communication_disabled_until':          ('timed_out_until', _transform_timestamp),
-        'expire_behavior':                       (None, _enum_transformer(enums.ExpireBehaviour)),
-        'mfa_level':                             (None, _enum_transformer(enums.MFALevel)),
-        'status':                                (None, _enum_transformer(enums.EventStatus)),
-        'entity_type':                           (None, _enum_transformer(enums.EntityType)),
-        'preferred_locale':                      (None, _enum_transformer(enums.Locale)),
+        'expire_behavior':                       (None, _enum_transformer(ExpireBehavior)),
+        'mfa_level':                             (None, _enum_transformer(MFALevel)),
+        'status':                                (None, _enum_transformer(EventStatus)),
+        'entity_type':                           (None, _enum_transformer(EntityType)),
+        'preferred_locale':                      (None, _enum_transformer(Locale)),
         'image_hash':                            ('cover_image', _transform_cover_image),
-        'trigger_type':                          (None, _enum_transformer(enums.AutoModRuleTriggerType)),
-        'event_type':                            (None, _enum_transformer(enums.AutoModRuleEventType)),
+        'trigger_type':                          (None, _enum_transformer(AutoModRuleTriggerType)),
+        'event_type':                            (None, _enum_transformer(AutoModRuleEventType)),
         'actions':                               (None, _transform_automod_actions),
         'exempt_channels':                       (None, _transform_channels_or_threads),
         'exempt_roles':                          (None, _transform_roles),
@@ -353,7 +352,7 @@ class AuditLogChanges:
         # special case entire process since each
         # element in data is a different target
         # key is the target id
-        if entry.action is enums.AuditLogAction.app_command_permission_update:
+        if entry.action is AuditLogAction.app_command_permission_update:
             self.before.app_command_permissions = []
             self.after.app_command_permissions = []
 
@@ -387,7 +386,7 @@ class AuditLogChanges:
                 # given full metadata dict
                 self._handle_trigger_metadata(entry, elem, data)  # type: ignore  # should be trigger metadata
                 continue
-            elif entry.action is enums.AuditLogAction.automod_rule_update and attr.startswith('$'):
+            elif entry.action is AuditLogAction.automod_rule_update and attr.startswith('$'):
                 # on update, some trigger attributes are keys and formatted as $(add/remove)_{attribute}
                 action, _, trigger_attr = attr.partition('_')
                 # new_value should be a list of added/removed strings for keyword_filter, regex_patterns, or allow_list
@@ -467,7 +466,7 @@ class AuditLogChanges:
             return
 
         # avoid circular import
-        from discord.app_commands import AppCommandPermissions
+        from ....commands import AppCommandPermissions
 
         state = entry._state
         guild = entry.guild
@@ -480,7 +479,7 @@ class AuditLogChanges:
         full_data: List[AuditLogChangePayload],
     ):
         trigger_value: Optional[int] = None
-        trigger_type: Optional[enums.AutoModRuleTriggerType] = None
+        trigger_type: Optional[AutoModRuleTriggerType] = None
 
         # try to get trigger type from before or after
         trigger_type = getattr(self.before, 'trigger_type', getattr(self.after, 'trigger_type', None))
@@ -504,13 +503,13 @@ class AuditLogChanges:
                 # try to infer trigger_type from the keys in old or new value
                 combined = (data.get('old_value') or {}).keys() | (data.get('new_value') or {}).keys()
                 if not combined:
-                    trigger_value = enums.AutoModRuleTriggerType.spam.value
+                    trigger_value = AutoModRuleTriggerType.spam.value
                 elif 'presets' in combined:
-                    trigger_value = enums.AutoModRuleTriggerType.keyword_preset.value
+                    trigger_value = AutoModRuleTriggerType.keyword_preset.value
                 elif 'keyword_filter' in combined or 'regex_patterns' in combined:
-                    trigger_value = enums.AutoModRuleTriggerType.keyword.value
+                    trigger_value = AutoModRuleTriggerType.keyword.value
                 elif 'mention_total_limit' in combined or 'mention_raid_protection_enabled' in combined:
-                    trigger_value = enums.AutoModRuleTriggerType.mention_spam.value
+                    trigger_value = AutoModRuleTriggerType.mention_spam.value
                 else:
                     # some unknown type
                     trigger_value = -1
@@ -538,7 +537,7 @@ class AuditLogChanges:
                 trigger_type = entry.target.trigger.type
             else:
                 # unknown trigger type
-                trigger_type = enums.try_enum(enums.AutoModRuleTriggerType, -1)
+                trigger_type = try_enum(AutoModRuleTriggerType, -1)
 
             diff.trigger = AutoModTrigger(type=trigger_type)
         return diff.trigger
@@ -657,7 +656,7 @@ class AuditLogEntry(Hashable):
         self._from_data(data)
 
     def _from_data(self, data: AuditLogEntryPayload) -> None:
-        self.action: enums.AuditLogAction = enums.try_enum(enums.AuditLogAction, data['action_type'])
+        self.action: AuditLogAction = try_enum(AuditLogAction, data['action_type'])
         self.id: int = int(data['id'])
 
         # this key is technically not usually present
@@ -679,26 +678,26 @@ class AuditLogEntry(Hashable):
         ] = None
         # fmt: on
 
-        if isinstance(self.action, enums.AuditLogAction) and extra:
-            if self.action is enums.AuditLogAction.member_prune:
+        if isinstance(self.action, AuditLogAction) and extra:
+            if self.action is AuditLogAction.member_prune:
                 # member prune has two keys with useful information
                 self.extra = _AuditLogProxyMemberPrune(
                     delete_member_days=int(extra['delete_member_days']),
                     members_removed=int(extra['members_removed']),
                 )
-            elif self.action is enums.AuditLogAction.member_move or self.action is enums.AuditLogAction.message_delete:
+            elif self.action is AuditLogAction.member_move or self.action is AuditLogAction.message_delete:
                 channel_id = int(extra['channel_id'])
                 self.extra = _AuditLogProxyMemberMoveOrMessageDelete(
                     count=int(extra['count']),
                     channel=self.guild.get_channel_or_thread(channel_id) or Object(id=channel_id),
                 )
-            elif self.action is enums.AuditLogAction.member_disconnect:
+            elif self.action is AuditLogAction.member_disconnect:
                 # The member disconnect action has a dict with some information
                 self.extra = _AuditLogProxyMemberDisconnect(count=int(extra['count']))
-            elif self.action is enums.AuditLogAction.message_bulk_delete:
+            elif self.action is AuditLogAction.message_bulk_delete:
                 # The bulk message delete action has the number of messages deleted
                 self.extra = _AuditLogProxyMessageBulkDelete(count=int(extra['count']))
-            elif self.action in (enums.AuditLogAction.kick, enums.AuditLogAction.member_role_update):
+            elif self.action in (AuditLogAction.kick, AuditLogAction.member_role_update):
                 # The member kick action has a dict with some information
                 integration_type = extra.get('integration_type')
                 self.extra = _AuditLogProxyMemberKickOrMemberRoleUpdate(integration_type=integration_type)
@@ -710,9 +709,9 @@ class AuditLogEntry(Hashable):
                     message_id=int(extra['message_id']),
                 )
             elif (
-                self.action is enums.AuditLogAction.automod_block_message
-                or self.action is enums.AuditLogAction.automod_flag_message
-                or self.action is enums.AuditLogAction.automod_timeout_member
+                self.action is AuditLogAction.automod_block_message
+                or self.action is AuditLogAction.automod_flag_message
+                or self.action is AuditLogAction.automod_timeout_member
             ):
                 channel_id = utils._get_as_snowflake(extra, 'channel_id')
                 channel = None
@@ -723,8 +722,8 @@ class AuditLogEntry(Hashable):
 
                 self.extra = _AuditLogProxyAutoModAction(
                     automod_rule_name=extra['auto_moderation_rule_name'],
-                    automod_rule_trigger_type=enums.try_enum(
-                        enums.AutoModRuleTriggerType, extra['auto_moderation_rule_trigger_type']
+                    automod_rule_trigger_type=try_enum(
+                        AutoModRuleTriggerType, extra['auto_moderation_rule_trigger_type']
                     ),
                     channel=channel,
                 )
@@ -809,7 +808,7 @@ class AuditLogEntry(Hashable):
             return converter(self._target_id)
 
     @utils.cached_property
-    def category(self) -> Optional[enums.AuditLogActionCategory]:
+    def category(self) -> Optional[AuditLogActionCategory]:
         """Optional[:class:`AuditLogActionCategory`]: The category of the action, if applicable."""
         return self.action.category
 
@@ -850,7 +849,7 @@ class AuditLogEntry(Hashable):
     def _convert_target_invite(self, target_id: None) -> Invite:
         # invites have target_id set to null
         # so figure out which change has the full invite data
-        changeset = self.before if self.action is enums.AuditLogAction.invite_delete else self.after
+        changeset = self.before if self.action is AuditLogAction.invite_delete else self.after
 
         fake_payload: InvitePayload = {
             'max_age': changeset.max_age,
@@ -899,7 +898,7 @@ class AuditLogEntry(Hashable):
         target = self._get_app_command(target_id)
         if not target:
             # circular import
-            from ....app_commands import AppCommand
+            from ....commands import AppCommand
 
             target = Object(target_id, type=AppCommand)
 
@@ -910,7 +909,7 @@ class AuditLogEntry(Hashable):
         if not target:
             try:
                 # circular import
-                from ....app_commands import AppCommand
+                from ....commands import AppCommand
 
                 # get application id from extras
                 # if it matches target id, type should be integration

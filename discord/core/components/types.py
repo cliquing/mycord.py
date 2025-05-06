@@ -28,7 +28,7 @@ from typing import List, Literal, TypedDict, Union
 from typing_extensions import NotRequired
 
 from ...core.emoji.types import PartialEmojiPayload
-from ...core.guild.channel.types import ChannelType
+from ...core.guild.channel.types import ChannelTypes
 
 ComponentType = Literal[1, 2, 3, 4]
 ButtonStyle = Literal[1, 2, 3, 4, 5, 6]
@@ -95,7 +95,7 @@ class MentionableSelectComponent(SelectComponentPayload):
 
 class ChannelSelectComponent(SelectComponentPayload):
     type: Literal[8]
-    channel_types: NotRequired[List[ChannelType]]
+    channel_types: NotRequired[List[ChannelTypes]]
     default_values: NotRequired[List[SelectDefaultValues]]
 
 
@@ -114,7 +114,7 @@ class TextInputPayload(TypedDict):
 class SelectMenuPayload(SelectComponentPayload):
     type: Literal[3, 5, 6, 7, 8]
     options: NotRequired[List[SelectOptionPayload]]
-    channel_types: NotRequired[List[ChannelType]]
+    channel_types: NotRequired[List[ChannelTypes]]
     default_values: NotRequired[List[SelectDefaultValues]]
 
 

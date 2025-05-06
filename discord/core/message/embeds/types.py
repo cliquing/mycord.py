@@ -53,3 +53,4 @@ class EmbedPayload(TypedDict, total=False):
     author: EmbedAuthor
     fields: List[EmbedField]
     flags: int
+

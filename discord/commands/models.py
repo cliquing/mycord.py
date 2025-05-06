@@ -66,13 +66,13 @@ if TYPE_CHECKING:
         ApplicationCommandOption, ApplicationCommandOptionChoice, ApplicationCommandPermissions, GuildApplicationCommandPermissions,
     )
 
-    from ..core.interaction.types import PartialChannel, PartialThread
+    from ..core.interaction.types import PartialInteractionChannelPayload, PartialThreadPayload
     from ..core.guild.threads.types import ThreadMetadata, ThreadArchiveDuration
 
 
     from ..abc import Snowflake
     from ..core.state.state import ConnectionState
-    from ..core.guild.guild import GuildChannel, Guild
+    from ..core.guild.guilds import GuildChannel, Guild
     from ..core.guild.channel import TextChannel
     from ..core.guild.threads import Thread
     from ..core.user.user import User
@@ -579,7 +579,7 @@ class AppCommandChannel(Hashable):
         self,
         *,
         state: ConnectionState,
-        data: PartialChannel,
+        data: PartialInteractionChannelPayload,
         guild_id: int,
     ):
         self._state: ConnectionState = state
@@ -722,7 +722,7 @@ class AppCommandThread(Hashable):
         self,
         *,
         state: ConnectionState,
-        data: PartialThread,
+        data: PartialThreadPayload,
         guild_id: int,
     ):
         self._state: ConnectionState = state

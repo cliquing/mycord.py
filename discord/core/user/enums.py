@@ -1,5 +1,10 @@
 from ...utils.enums import Enum
 
+__all__ = (
+    'UserFlags',
+    'DefaultAvatar',
+)
+
 class UserFlags(Enum):
     staff = 1
     partner = 2
@@ -35,14 +40,3 @@ class DefaultAvatar(Enum):
     def __str__(self) -> str:
         return self.name
     
-
-class Status(Enum):
-    online = 'online'
-    offline = 'offline'
-    idle = 'idle'
-    dnd = 'dnd'
-    do_not_disturb = 'dnd'
-    invisible = 'invisible'
-
-    def __str__(self) -> str:
-        return self.value

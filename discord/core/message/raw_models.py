@@ -1,37 +1,21 @@
 from __future__ import annotations
 
-import datetime
 from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
 
-from ...utils import _get_as_snowflake, _RawReprMixin
+from ...utils.utils import _RawReprMixin
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
 
-    from ..gateway import (
-        MessageDeleteEvent,
-        MessageDeleteBulkEvent as BulkMessageDeleteEvent,
-        MessageReactionAddEvent,
-        MessageReactionRemoveEvent,
-        MessageReactionRemoveAllEvent as ReactionClearEvent,
-        MessageReactionRemoveEmojiEvent as ReactionClearEmojiEvent,
-        MessageUpdateEvent,
-        IntegrationDeleteEvent,
-        ThreadUpdateEvent,
-        ThreadDeleteEvent,
-        ThreadMembersUpdate,
-        TypingStartEvent,
-        GuildMemberRemoveEvent,
-        PollVoteActionEvent,
-    )
+
+    from .types import MessageDeleteEvent, MessageDeleteBulkEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageUpdateEvent
     
-    from .message import Message
+    from .messages import Message
 
     ReactionActionEvent = Union[MessageReactionAddEvent, MessageReactionRemoveEvent]
     ReactionActionType = Literal['REACTION_ADD', 'REACTION_REMOVE']
 
 
-__all__ = ('RawMessageDeleteEvent', 'RawBulkMessageDeleteEvent', 'RawMessageUpdateEvent',
+__all__ = ('RawMessageDeleteEvent', 'RawMessageDeleteBulkEvent', 'RawMessageUpdateEvent',
 )
 
 class RawMessageDeleteEvent(_RawReprMixin):
@@ -61,7 +45,7 @@ class RawMessageDeleteEvent(_RawReprMixin):
             self.guild_id: Optional[int] = None
 
 
-class RawBulkMessageDeleteEvent(_RawReprMixin):
+class RawMessageDeleteBulkEvent(_RawReprMixin):
     """Represents the event payload for a :func:`on_raw_bulk_message_delete` event.
 
     Attributes
@@ -78,7 +62,7 @@ class RawBulkMessageDeleteEvent(_RawReprMixin):
 
     __slots__ = ('message_ids', 'channel_id', 'guild_id', 'cached_messages')
 
-    def __init__(self, data: BulkMessageDeleteEvent) -> None:
+    def __init__(self, data: MessageDeleteBulkEvent) -> None:
         self.message_ids: Set[int] = {int(x) for x in data.get('ids', [])}
         self.channel_id: int = int(data['channel_id'])
         self.cached_messages: List[Message] = []

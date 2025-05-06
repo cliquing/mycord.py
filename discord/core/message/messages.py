@@ -50,7 +50,7 @@ from ..asset import Asset
 from .reaction import Reaction
 from ..emoji.emoji import Emoji
 from ..emoji.partial import PartialEmoji
-from .enums import InteractionType, MessageReferenceType, MessageType, try_enum
+from .enums import MessageReferenceType, MessageType
 from ..guild.channel.enums import ChannelType
 from ...errors import HTTPException
 from ..components.components import _component_factory
@@ -60,18 +60,20 @@ from .flags import MessageFlags, AttachmentFlags
 from .file import File
 from ...utils import escape_mentions, MISSING, deprecated
 from ..http import handle_message_parameters
-from ..guild.guild import Guild
+from ..guild import Guild
 from ...utils.mixins import Hashable
 from ..guild.sticker import StickerItem, GuildSticker
 from ..guild.threads import Thread
 from ..guild.channel import PartialMessageable
 from .poll import Poll
+from ..interaction.enums import InteractionType
+from ...utils.enums import try_enum
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
     from .types import (
-        Message as MessagePayload,
+        MessagePayload,
         AttachmentPayload,
         MessageReference as MessageReferencePayload,
         MessageSnapshot as MessageSnapshotPayload,
@@ -91,7 +93,7 @@ if TYPE_CHECKING:
     from ..guild.member.types import MemberPayload, UserWithMember as UserWithMemberPayload
     from ..user.types import UserPayload
     from .embeds.types import EmbedPayload
-    from ..gateway.types import MessageReactionRemoveEvent, MessageUpdateEvent
+    from .types import MessageReactionRemoveEvent, MessageUpdateEvent
     from ...abc import Snowflake
     from ...abc import GuildChannel, MessageableChannel
     from ..components.components import ActionRow, ActionRowChildComponentType

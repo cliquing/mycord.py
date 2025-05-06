@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
     from ....abc import Snowflake, GuildChannel
     from ..threads.threads import Thread
-    from ..guild import Guild
+    from ..guilds import Guild
     from ..member.member import Member
     from ...state.state import ConnectionState
     from .types import (

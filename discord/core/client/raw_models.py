@@ -3,17 +3,14 @@ import datetime
 from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 from .activity.activity import create_activity
-from ...utils.utils import MISSING, _get_as_snowflake, _RawReprMixin
-from ...utils.enums import try_enum
-from ..user.enums import Status
+from ...utils.utils import _get_as_snowflake, _RawReprMixin
 from .status import ClientStatus
 if TYPE_CHECKING:
-    from typing_extensions import Self
 
     from .activity.activity import ActivityTypes
     from ..guild import Guild
     from ..state.state import ConnectionState
-    from .activity import ClientStatusPayload, PartialPresenceUpdate
+    from .activity import PartialPresenceUpdate
     from .types import TypingStartEvent
     from ..user import User
     from ..guild.member import Member

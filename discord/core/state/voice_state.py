@@ -50,17 +50,17 @@ from typing import TYPE_CHECKING, Optional, Dict, List, Callable, Coroutine, Any
 from ...utils.enums import Enum
 from ...utils import MISSING, sane_wait_for
 from ...errors import ConnectionClosed
-from ...other.backoff import ExponentialBackoff
+from ...utils.backoff import ExponentialBackoff
 from ..gateway.gateway import DiscordVoiceWebSocket
 
 if TYPE_CHECKING:
     from ... import abc
-    from ..guild.guild import Guild
+    from ..guild import Guild
     from ..user.user import ClientUser
     from ..guild.member import VoiceState
     from ..client.voice import VoiceClient
 
-    from .types import GuildVoiceStatePayload, VoiceServerUpdate as VoiceServerUpdatePayload, SupportedModes
+    from .types import GuildVoiceStatePayload, VoiceServerUpdatePayload, SupportedModes
 
 
     WebsocketHook = Optional[Callable[[DiscordVoiceWebSocket, Dict[str, Any]], Coroutine[Any, Any, Any]]]

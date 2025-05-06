@@ -1,20 +1,12 @@
 from __future__ import annotations
 
-import datetime
-from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
+from typing import TYPE_CHECKING, Optional
 
-from ....utils.utils import _get_as_snowflake, _RawReprMixin
+from ....utils.utils import _RawReprMixin
 if TYPE_CHECKING:
-    from typing_extensions import Self
 
-    from ...gateway import IntegrationDeleteEvent
+    from .types import IntegrationDeleteEvent
     
-    from ...message.message import Message
-    from ...emoji import PartialEmoji
-    from ..member.member import Member
-    from ...user.user import User
-    from ...state.state import ConnectionState
-    from ..guild import Guild
 
 
 

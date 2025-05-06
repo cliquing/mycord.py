@@ -41,8 +41,7 @@ if TYPE_CHECKING:
 
     from ..state.state import ConnectionState
     from datetime import datetime
-    from .types import EmojiPayload, PartialEmojiPayload
-    from .types import ActivityEmojiPayload
+    from .types import EmojiPayload, PartialEmojiPayload, ActivityEmojiPayload
 
 
 class _EmojiTag:

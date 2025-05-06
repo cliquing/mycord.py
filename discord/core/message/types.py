@@ -30,14 +30,15 @@ from typing_extensions import NotRequired, Required
 from ...utils.snowflake import Snowflake, SnowflakeList
 from ..guild.member.types import MemberPayload, UserWithMember, MemberWithUser
 from ..user import User
-from ..emoji import PartialEmoji
+from ..emoji import PartialEmojiPayload
 from .embeds.types import EmbedPayload
-from ..guild.channel.types import ChannelType
+from ..guild.channel import ChannelTypes
 from ..components.types import ComponentPayload
 from ..interaction.types import MessageInteractionPayload, MessageInteractionMetadata
 from ..guild.sticker.types import StickerItemPayload
 from ..guild.threads import ThreadPayload
 from .poll.types import PollPayload
+
 
 
 class PartialMessagePayload(TypedDict):
@@ -48,7 +49,7 @@ class PartialMessagePayload(TypedDict):
 class ChannelMention(TypedDict):
     id: Snowflake
     guild_id: Snowflake
-    type: ChannelType
+    type: ChannelTypes
     name: str
 
 
@@ -57,13 +58,12 @@ class ReactionCountDetails(TypedDict):
     normal: int
 
 
-ReactionType = Literal[0, 1]
-
+ReactionTypes = Literal[0, 1]
 
 class ReactionPayload(TypedDict):
     count: int
     me: bool
-    emoji: PartialEmoji
+    emoji: PartialEmojiPayload
     me_burst: bool
     count_details: ReactionCountDetails
     burst_colors: List[str]
@@ -123,7 +123,7 @@ class CallMessage(TypedDict):
     ended_timestamp: NotRequired[Optional[str]]
 
 
-MessageType = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 36, 37, 38, 39, 44, 46, ]
+MessageTypes = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 36, 37, 38, 39, 44, 46, ]
 
 class AttachmentPayload(TypedDict):
     id: Snowflake
@@ -142,7 +142,7 @@ class AttachmentPayload(TypedDict):
     flags: NotRequired[int]
 
 class MessageSnapshot(TypedDict):
-    type: MessageType
+    type: MessageTypes
     content: str
     embeds: List[EmbedPayload]
     attachments: List[AttachmentPayload]
@@ -169,7 +169,7 @@ class MessagePayload(PartialMessagePayload):
     embeds: List[EmbedPayload]
     pinned: bool
     poll: NotRequired[PollPayload]
-    type: MessageType
+    type: MessageTypes
     member: NotRequired[MemberPayload]
     mention_channels: NotRequired[List[ChannelMention]]
     reactions: NotRequired[List[ReactionPayload]]
@@ -195,7 +195,7 @@ class MessagePayload(PartialMessagePayload):
 AllowedMentionType = Literal['roles', 'users', 'everyone']
 
 
-class AllowedMentions(TypedDict):
+class AllowedMentionsPayload(TypedDict):
     parse: List[AllowedMentionType]
     roles: SnowflakeList
     users: SnowflakeList
@@ -225,23 +225,23 @@ class MessageReactionAddEvent(TypedDict):
     user_id: Snowflake
     channel_id: Snowflake
     message_id: Snowflake
-    emoji: PartialEmoji
+    emoji: PartialEmojiPayload
     member: NotRequired[MemberWithUser]
     guild_id: NotRequired[Snowflake]
     message_author_id: NotRequired[Snowflake]
     burst: bool
     burst_colors: NotRequired[List[str]]
-    type: ReactionType
+    type: ReactionTypes
 
 
 class MessageReactionRemoveEvent(TypedDict):
     user_id: Snowflake
     channel_id: Snowflake
     message_id: Snowflake
-    emoji: PartialEmoji
+    emoji: PartialEmojiPayload
     guild_id: NotRequired[Snowflake]
     burst: bool
-    type: ReactionType
+    type: ReactionTypes
 
 
 class MessageReactionRemoveAllEvent(TypedDict):
@@ -251,8 +251,10 @@ class MessageReactionRemoveAllEvent(TypedDict):
 
 
 class MessageReactionRemoveEmojiEvent(TypedDict):
-    emoji: PartialEmoji
+    emoji: PartialEmojiPayload
     message_id: Snowflake
     channel_id: Snowflake
     guild_id: NotRequired[Snowflake]
+
+
 

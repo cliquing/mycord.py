@@ -29,80 +29,26 @@ from typing_extensions import NotRequired
 
 from ..channel.types import DefaultReactionPayload
 
-from ...webhook import Webhook
+from ..threads import ThreadPayload
+from ...webhook import WebhookPayload
+from ...user import UserPayload
+from ..role import RolePayload
+from ..channel import PermissionOverwritePayload
+from ..integration import IntegrationExpireBehavior, PartialIntegrationPayload
 from ..enums import MFALevel, VerificationLevel
 from ..types import ExplicitContentFilterLevel, DefaultMessageNotificationLevel
-from ..integration import IntegrationExpireBehavior, PartialIntegration
-from ...user import User
+
 from ..scheduled_event import EntityType, EventStatus, GuildScheduledEvent
 from ....utils.snowflake import Snowflake
-from ..role import Role
-from ..channel import ChannelType, VideoQualityMode, PermissionOverwrite, ForumTag
-from ..threads import Thread
+from ..channel import ChannelType, VideoQualityMode, ForumTag
+
 from ....types.command import ApplicationCommand, ApplicationCommandPermissions
 from ..automod import AutoModerationTriggerMetadata
 from ..enums import PrivacyLevel
 
-AuditLogEvent = Literal[
-    1,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    30,
-    31,
-    32,
-    40,
-    41,
-    42,
-    50,
-    51,
-    52,
-    60,
-    61,
-    62,
-    72,
-    73,
-    74,
-    75,
-    80,
-    81,
-    82,
-    83,
-    84,
-    85,
-    90,
-    91,
-    92,
-    100,
-    101,
-    102,
-    110,
-    111,
-    112,
-    121,
-    130,
-    131,
-    132,
-    140,
-    141,
-    142,
-    143,
-    144,
-    145,
-    150,
-    151,
+
+AuditLogEvent = Literal[1, 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 40, 41, 42, 50, 51, 52, 60, 61, 62, 72, 73, 74, 75,
+    80, 81, 82, 83, 84, 85, 90, 91, 92, 100, 101, 102, 110, 111, 112, 121, 130, 131, 132, 140, 141, 142, 143, 144, 145, 150, 151
 ]
 
 
@@ -201,8 +147,8 @@ class _AuditLogChange_Float(TypedDict):
 
 class _AuditLogChange_ListRole(TypedDict):
     key: Literal['$add', '$remove']
-    new_value: List[Role]
-    old_value: List[Role]
+    new_value: List[RolePayload]
+    old_value: List[RolePayload]
 
 
 class _AuditLogChange_MFALevel(TypedDict):
@@ -249,8 +195,8 @@ class _AuditLogChange_VideoQualityMode(TypedDict):
 
 class _AuditLogChange_Overwrites(TypedDict):
     key: Literal['permission_overwrites']
-    new_value: List[PermissionOverwrite]
-    old_value: List[PermissionOverwrite]
+    new_value: List[PermissionOverwritePayload]
+    old_value: List[PermissionOverwritePayload]
 
 
 class _AuditLogChange_PrivacyLevel(TypedDict):
@@ -328,7 +274,7 @@ AuditLogChange = Union[
 ]
 
 
-class AuditEntryInfo(TypedDict):
+class AuditEntryInfoPayload(TypedDict):
     delete_member_days: str
     members_removed: str
     channel_id: Snowflake
@@ -344,21 +290,21 @@ class AuditEntryInfo(TypedDict):
     integration_type: str
 
 
-class AuditLogEntry(TypedDict):
+class AuditLogEntryPayload(TypedDict):
     target_id: Optional[str]
     user_id: Optional[Snowflake]
     id: Snowflake
     action_type: AuditLogEvent
     changes: NotRequired[List[AuditLogChange]]
-    options: NotRequired[AuditEntryInfo]
+    options: NotRequired[AuditEntryInfoPayload]
     reason: NotRequired[str]
 
 
-class AuditLog(TypedDict):
-    webhooks: List[Webhook]
-    users: List[User]
-    audit_log_entries: List[AuditLogEntry]
-    integrations: List[PartialIntegration]
-    threads: List[Thread]
+class AuditLogPayload(TypedDict):
+    webhooks: List[WebhookPayload]
+    users: List[UserPayload]
+    audit_log_entries: List[AuditLogEntryPayload]
+    integrations: List[PartialIntegrationPayload]
+    threads: List[ThreadPayload]
     guild_scheduled_events: List[GuildScheduledEvent]
     application_commands: List[ApplicationCommand]

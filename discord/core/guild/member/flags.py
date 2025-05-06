@@ -1,35 +1,17 @@
-from typing import Type
-from ....utils.flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
-
-__all__ = (
-
-    'MemberCacheFlags',
-    'MemberFlags',
-
-)
 from __future__ import annotations
+from typing import Type
+from ....utils.flags import BaseFlags, fill_with_flags, flag_value
 
-from functools import reduce
-from operator import or_
+__all__ = ('MemberCacheFlags', 'MemberFlags',
+)
+
+
 from typing import (
     TYPE_CHECKING,
-    Any,
-    Callable,
-    ClassVar,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    overload,
 )
 
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
     from ...gateway.flags import Intents
 
 @fill_with_flags()

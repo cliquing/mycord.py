@@ -155,10 +155,10 @@ if TYPE_CHECKING:
 
     from typing_extensions import ParamSpec, Self, TypeGuard
 
-    from .entity.permissions import Permissions
-    from .abc import Snowflake
-    from .core.invite.invite import Invite
-    from .other.template.template import Template
+    from .permissions import Permissions
+    from ..abc import Snowflake
+    from ..core.guild.invite import Invite
+    from ..core.guild.template import Template
 
     class _DecompressionContext(Protocol):
         COMPRESSION_TYPE: str
@@ -923,7 +923,7 @@ def resolve_template(code: Union[Template, str]) -> str:
     :class:`str`
         The template code.
     """
-    from .other.template.template import Template  # circular import
+    from ..core.guild.template import Template  # circular import
 
     if isinstance(code, Template):
         return code.code

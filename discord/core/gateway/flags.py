@@ -1,30 +1,17 @@
+from __future__ import annotations
 from functools import reduce
 from typing import Type
-from ..flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
+from ...utils.flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
 
-from __future__ import annotations
 
-from functools import reduce
-from operator import or_
+
 from typing import (
     TYPE_CHECKING,
-    Any,
-    Callable,
-    ClassVar,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    overload,
 )
 
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    pass
     
 @fill_with_flags()
 class Intents(BaseFlags):

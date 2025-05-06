@@ -1,29 +1,17 @@
 from __future__ import annotations
 
-import datetime
-from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
+from typing import TYPE_CHECKING, Optional
 
-from ....utils.utils import _get_as_snowflake, _RawReprMixin
+from ....utils.utils import _RawReprMixin
 from ....utils.enums import try_enum
 from ..channel.enums import ChannelType
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ...gateway import (
-        ThreadUpdateEvent,
-        ThreadDeleteEvent,
-        ThreadMembersUpdate,
-
-    )
-    from ...message.message import Message
-    from ...emoji import PartialEmoji
-    from ..member.member import Member
+    from .types import ThreadUpdateEvent, ThreadDeleteEvent, ThreadMembersUpdate
     #from .types import ThreadPayload
     from .threads import Thread
-    from ...user.user import User
-    from ...state.state import ConnectionState
-    from ..guild import Guild
 
 
 

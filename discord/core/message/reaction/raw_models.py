@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import datetime
-from typing import TYPE_CHECKING, Literal, Optional, Set, List, Union
+from typing import TYPE_CHECKING, Literal, Optional, List, Union
 
 from .enums import ReactionType
 from ....utils.utils import _get_as_snowflake, _RawReprMixin
@@ -9,7 +8,6 @@ from ....utils.color import Colour
 from ....utils.enums import try_enum
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
     from ..types import (MessageReactionAddEvent, MessageReactionRemoveEvent,
         MessageReactionRemoveAllEvent as ReactionClearEvent,
         MessageReactionRemoveEmojiEvent as ReactionClearEmojiEvent,

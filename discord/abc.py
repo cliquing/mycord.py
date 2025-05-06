@@ -48,7 +48,7 @@ from typing import (
 )
 
 from .utils.object import OLDEST_OBJECT, Object
-from .other.context_managers import Typing
+from .utils.context_managers import Typing
 from .core.guild.channel.enums import ChannelType
 from .core.guild.invite.enums import InviteTarget
 from .errors import ClientException, NotFound
@@ -60,7 +60,7 @@ from .core.message.file import File
 from .core.http import handle_message_parameters
 from .core.client.voice import VoiceClient, VoiceProtocol
 from .core.guild.sticker import GuildSticker, StickerItem
-from . import utils
+from .utils import utils
 
 __all__ = (
     'Snowflake',
@@ -80,11 +80,11 @@ if TYPE_CHECKING:
     from .core.user.user import ClientUser
     from .core.asset import Asset
     from .core.state.state import ConnectionState
-    from .core.guild.guild import Guild
+    from .core.guild import Guild
     from .core.guild.member import Member
     from .core.guild.channel import CategoryChannel
     from .core.message.embeds import Embed
-    from .core.message.message import Message, MessageReference, PartialMessage
+    from .core.message import Message, MessageReference, PartialMessage
     from .core.guild.channel import TextChannel, DMChannel, GroupChannel, PartialMessageable, VocalGuildChannel, VoiceChannel, StageChannel
     from .core.message.poll import Poll
     from .core.guild.threads import Thread
@@ -1599,7 +1599,7 @@ class Messageable:
             raise TypeError(f'view parameter must be View not {view.__class__.__name__}')
 
         if suppress_embeds or silent:
-            from .core.message.message import MessageFlags  # circular import
+            from .core.message import MessageFlags  # circular import
 
             flags = MessageFlags._from_value(0)
             flags.suppress_embeds = suppress_embeds

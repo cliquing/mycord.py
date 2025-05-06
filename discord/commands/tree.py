@@ -61,13 +61,13 @@ from .errors import (
 from .installs import AppCommandContext, AppInstallationType
 from .translator import Translator, locale_str
 from ..errors import ClientException, HTTPException
-from ..enums import AppCommandType, InteractionType
-from ..utils import MISSING, _get_as_snowflake, _is_submodule, _shorten
+from ..utils.utils import MISSING, _get_as_snowflake, _is_submodule, _shorten
 from .._types import ClientT
-
+from ..core.appinfo import AppCommandType
+from ..core.interaction.enums import InteractionType
 
 if TYPE_CHECKING:
-    from ..types.interactions import ApplicationCommandInteractionData, ApplicationCommandInteractionDataOption
+    from ..core.interaction.types import ApplicationCommandInteractionData, ApplicationCommandInteractionDataOption
     from ..core.interaction.interactions import Interaction
     from ..abc import Snowflake
     from .commands import ContextMenuCallback, CommandCallback, P, T

@@ -1,18 +1,12 @@
-from typing import List, Literal, Optional, TypedDict
-from typing_extensions import NotRequired, Required
+from typing import Literal, TypedDict
+from typing_extensions import NotRequired
 
 
 
-from ..guild.channel import ChannelType, StageInstance, VoiceChannelEffect
-from ..interaction.interactions import Interaction
-from ..guild.invite import InviteTargetType
-from ..emoji import Emoji, PartialEmoji
 from ..guild.member import MemberWithUser
 from ...utils.snowflake import Snowflake
 
 
-from ..guild import Guild, UnavailableGuild
-from ..user import User, AvatarDecorationData
 
 
 class TypingStartEvent(TypedDict):
@@ -21,3 +15,11 @@ class TypingStartEvent(TypedDict):
     timestamp: int
     guild_id: NotRequired[Snowflake]
     member: NotRequired[MemberWithUser]
+
+
+StatusTypes = Literal['idle', 'dnd', 'online', 'offline']
+class ClientStatusPayload(TypedDict, total=False):
+    desktop: StatusTypes
+    mobile: StatusTypes
+    web: StatusTypes
+

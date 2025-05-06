@@ -37,7 +37,7 @@ __all__ = (
 
 if TYPE_CHECKING:
     from ...guild.member import Member
-    from ..message import Message
+    from ..messages import Message
     from ..types import ReactionPayload
     
     from ...emoji import PartialEmoji, Emoji

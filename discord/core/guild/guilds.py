@@ -58,45 +58,33 @@ from ...errors import InvalidData
 from ...utils.permissions import PermissionOverwrite
 from ...utils.color import Colour
 from ...errors import ClientException
-from ...channel import *
-from ...channel import _guild_channel_factory
-from ...channel import _threaded_guild_channel_factory
-from ...enums import (
-    AuditLogAction,
-    VideoQualityMode,
-    ChannelType,
-    EntityType,
-    PrivacyLevel,
-    try_enum,
-    VerificationLevel,
-    ContentFilter,
-    NotificationLevel,
-    NSFWLevel,
-    MFALevel,
-    Locale,
-    AutoModRuleEventType,
-    ForumOrderType,
-    ForumLayoutType,
-)
+#from .channel import *
+from .channel import _guild_channel_factory, _threaded_guild_channel_factory
+from .enums import (EntityType, PrivacyLevel, VerificationLevel, ContentFilter, NotificationLevel, NSFWLevel, MFALevel)
+from .channel.other import ForumTag
+from .channel.enums import ChannelType, VideoQualityMode, ForumOrderType, ForumLayoutType
+from .automod.enums import AutoModRuleEventType
+from .audit_logs.enums import AuditLogAction
+from ...utils.enums import Locale, try_enum
 from ...utils.mixins import Hashable
 from ..user.user import User
-from ..invite.invite import Invite
-from ...other.widget.widget import Widget
+from .invite import Invite
+from .widget import Widget
 from ..asset import Asset
-from ...flags import SystemChannelFlags
-from ...other.integration.integrations import Integration, PartialIntegration, _integration_factory
-from ...other.scheduled_event.scheduled_event import ScheduledEvent
-from ..channel.stage_instance import StageInstance
-from ...other.threads.threads import Thread, ThreadMember
-from ...other.sticker.sticker import GuildSticker
+from .channel.flags import SystemChannelFlags
+from .integration.integrations import Integration, PartialIntegration, _integration_factory
+from .scheduled_event import ScheduledEvent
+from .channel.stage_instance import StageInstance
+from .threads import Thread, ThreadMember
+from .sticker import GuildSticker
 from ..message.file import File
-from ...other.audit_logs.audit_logs import AuditLogEntry
+from .audit_logs import AuditLogEntry
 from ...utils.object import OLDEST_OBJECT, Object
-from ...other.welcome_screen.welcome_screen import WelcomeScreen, WelcomeChannel
-from ...other.automod.automod import AutoModRule, AutoModTrigger, AutoModRuleAction
+from .welcome_screen import WelcomeScreen, WelcomeChannel
+from .automod import AutoModRule, AutoModTrigger, AutoModRuleAction
 from ..emoji.partial import _EmojiTag, PartialEmoji
-from ...other.soundboard.soundboard import SoundboardSound
-from ...presences import RawPresenceUpdateEvent
+from .soundboard import SoundboardSound
+from ..client import RawPresenceUpdateEvent
 
 __all__ = (
     'Guild',
@@ -108,38 +96,24 @@ MISSING = utils.MISSING
 
 if TYPE_CHECKING:
     from ...abc import Snowflake, SnowflakeTime
-    from ...types.guild import (
-        Ban as BanPayload,
-        Guild as GuildPayload,
-        GuildPreview as GuildPreviewPayload,
-        RolePositionUpdate as RolePositionUpdatePayload,
-        GuildFeature,
-        IncidentData,
-    )
-    from ...types.threads import (
-        Thread as ThreadPayload,
-    )
-    from ...types.voice import GuildVoiceState
+
+    from .types import GuildPayload, BanPayload, GuildPreviewPayload, RolePositionUpdatePayload, GuildFeatures, IncidentData
+    from .threads.types import ThreadPayload
+    from ..state.types import GuildVoiceStatePayload
     from ...utils.permissions import Permissions
-    from ...channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel
-    from ...other.template.template import Template
-    from ...webhook import Webhook
+    from .channel import VoiceChannel, StageChannel, TextChannel, ForumChannel, CategoryChannel
+    from .template.template import Template
+    from ..webhook import Webhook
     from ..state.state import ConnectionState
-    from ...voice_client import VoiceProtocol
-    from ...types.channel import (
-        GuildChannel as GuildChannelPayload,
-        TextChannel as TextChannelPayload,
-        NewsChannel as NewsChannelPayload,
-        VoiceChannel as VoiceChannelPayload,
-        CategoryChannel as CategoryChannelPayload,
-        StageChannel as StageChannelPayload,
-        ForumChannel as ForumChannelPayload,
-    )
-    from .integration.types import IntegrationType
+    from ..client.voice import VoiceProtocol
+
+    from .channel.types import GuildChannelPayload, TextChannelPayload, VoiceChannelPayload, StageChannelPayload, CategoryChannelPayload, NewsChannelPayload, ForumChannelPayload
+
+    from .integration.types import IntegrationTypes
     
-    from .widget.types import EditWidgetSettings
+    from .widget.types import EditWidgetSettingsPayload
     from .audit_logs.types import AuditLogEvent
-    from ..message.message import EmojiInputType
+    from ..message.messages import EmojiInputType
 
     from ...utils.snowflake import SnowflakeList
 
@@ -239,7 +213,7 @@ class GuildPreview(Hashable):
         self.stickers: Tuple[GuildSticker, ...] = tuple(
             map(lambda d: GuildSticker(state=state, data=d), data.get('stickers', []))
         )
-        self.features: List[GuildFeature] = data.get('features', [])
+        self.features: List[GuildFeatures] = data.get('features', [])
         self.description: Optional[str] = data.get('description')
         self.approximate_member_count: int = data.get('approximate_member_count')
         self.approximate_presence_count: int = data.get('approximate_presence_count')
@@ -533,7 +507,7 @@ class Guild(Hashable):
         inner = ' '.join('%s=%r' % t for t in attrs)
         return f'<Guild {inner}>'
 
-    def _update_voice_state(self, data: GuildVoiceState, channel_id: int) -> Tuple[Optional[Member], VoiceState, VoiceState]:
+    def _update_voice_state(self, data: GuildVoiceStatePayload, channel_id: int) -> Tuple[Optional[Member], VoiceState, VoiceState]:
         user_id = int(data['user_id'])
         channel: Optional[VocalGuildChannel] = self.get_channel(channel_id)  # type: ignore # this will always be a voice channel
         try:
@@ -608,7 +582,7 @@ class Guild(Hashable):
             if state.cache_guild_expressions
             else ()
         )
-        self.features: List[GuildFeature] = guild.get('features', [])
+        self.features: List[GuildFeatures] = guild.get('features', [])
         self._splash: Optional[str] = guild.get('splash')
         self._system_channel_id: Optional[int] = utils._get_as_snowflake(guild, 'system_channel_id')
         self.description: Optional[str] = guild.get('description')
@@ -1920,7 +1894,7 @@ class Guild(Hashable):
             elif isinstance(default_reaction_emoji, str):
                 options['default_reaction_emoji'] = PartialEmoji.from_str(default_reaction_emoji)._to_forum_tag_payload()
             else:
-                raise ValueError(f'default_reaction_emoji parameter must be either Emoji, PartialEmoji, or str')
+                raise ValueError('default_reaction_emoji parameter must be either Emoji, PartialEmoji, or str')
 
         if default_layout is not MISSING:
             if not isinstance(default_layout, ForumLayoutType):
@@ -2320,7 +2294,7 @@ class Guild(Hashable):
         if premium_progress_bar_enabled is not MISSING:
             fields['premium_progress_bar_enabled'] = premium_progress_bar_enabled
 
-        widget_payload: EditWidgetSettings = {}
+        widget_payload: EditWidgetSettingsPayload = {}
         if widget_channel is not MISSING:
             widget_payload['channel_id'] = None if widget_channel is None else widget_channel.id
         if widget_enabled is not MISSING:
@@ -2803,7 +2777,7 @@ class Guild(Hashable):
         List[:class:`Template`]
             The templates for this guild.
         """
-        from ...other.template.template import Template
+        from .template import Template
 
         data = await self._state.http.guild_templates(self.id)
         return [Template(data=d, state=self._state) for d in data]
@@ -2826,7 +2800,7 @@ class Guild(Hashable):
             The webhooks for this guild.
         """
 
-        from ...webhook import Webhook
+        from ..webhook import Webhook
 
         data = await self._state.http.guild_webhooks(self.id)
         return [Webhook.from_state(d, state=self._state) for d in data]
@@ -2925,7 +2899,7 @@ class Guild(Hashable):
         description: :class:`str`
             The description of the template.
         """
-        from ...other.template.template import Template
+        from .template import Template
 
         payload = {'name': name}
 
@@ -2936,7 +2910,7 @@ class Guild(Hashable):
 
         return Template(state=self._state, data=data)
 
-    async def create_integration(self, *, type: IntegrationType, id: int) -> None:
+    async def create_integration(self, *, type: IntegrationTypes, id: int) -> None:
         """|coro|
 
         Attaches an integration to the guild.
@@ -4211,8 +4185,8 @@ class Guild(Hashable):
                 predicate = lambda m: int(m['id']) > after.id
 
         # avoid circular import
-        from ...app_commands import AppCommand
-        from ...webhook import Webhook
+        from ...commands import AppCommand
+        from ..webhook import Webhook
 
         while True:
             retrieve = 100 if limit is None else min(limit, 100)
@@ -4319,7 +4293,7 @@ class Guild(Hashable):
         HTTPException
             Editing the widget failed.
         """
-        payload: EditWidgetSettings = {}
+        payload: EditWidgetSettingsPayload = {}
         if channel is not MISSING:
             payload['channel_id'] = None if channel is None else channel.id
         if enabled is not MISSING:

@@ -1,17 +1,25 @@
-from .sku import SKU, Entitlement
-from .types import SKUPayload, EntitlementPayload
+from .skus import SKU, Entitlement
+from .types import EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent, SKUPayload, EntitlementOwnerTypes, EntitlementPayload
 from .enums import SKUType, EntitlementType, EntitlementOwnerType
 from .flags import SKUFlags
 
-__all__ = (
+__all___ = (
     'SKU',
-    'Entitlement',
+    'SKUFlags',
     'SKUType',
+    'Entitlement',
     'EntitlementType',
     'EntitlementOwnerType',
-    'SKUFlags',
+    'EntitlementCreateEvent',
+    'EntitlementDeleteEvent',
+    'EntitlementUpdateEvent',
     'SKUPayload',
-    'EntitlementPayload')
+    'EntitlementOwnerTypes',
+    'EntitlementPayload',
+    'EntitlementOwnerTypes'
+    
+)
+
 
 
 

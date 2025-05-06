@@ -35,7 +35,7 @@ from ....utils.enums import try_enum
 from ....errors import ClientException
 from ..channel.flags import ChannelFlags
 from ....utils.permissions import Permissions
-from ....utils import MISSING, parse_time, _get_as_snowflake, _unique
+from ....utils.utils import MISSING, parse_time, _get_as_snowflake, _unique
 
 __all__ = (
     'Thread',
@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from .types import (ThreadPayload, ThreadMemberPayload, ThreadMetadata, ThreadArchiveDuration,
     )
     from ....utils.snowflake import SnowflakeList
-    from ..guild import Guild
+    from ..guilds import Guild
     from ..channel import TextChannel, CategoryChannel, ForumChannel, ForumTag
     from ..member import Member
     from ...message import Message, PartialMessage

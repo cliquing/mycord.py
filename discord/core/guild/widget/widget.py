@@ -31,15 +31,12 @@ from ...user.user import BaseUser
 from ...client.activity.activity import BaseActivity, Spotify, create_activity
 from ...guild.invite import Invite
 from ....utils.enums import try_enum
-from ...user import Status
+from ...client import StatusType
 
 if TYPE_CHECKING:
     import datetime
     from ...state import ConnectionState
-    from .types import (
-        WidgetMember as WidgetMemberPayload,
-        Widget as WidgetPayload,
-    )
+    from .types import WidgetPayload, WidgetMemberPayload
 
 __all__ = (
     'WidgetChannel',
@@ -179,7 +176,7 @@ class WidgetMember(BaseUser):
     ) -> None:
         super().__init__(state=state, data=data)
         self.nick: Optional[str] = data.get('nick')
-        self.status: Status = try_enum(Status, data.get('status'))
+        self.status: StatusType = try_enum(StatusType, data.get('status'))
         self.deafened: Optional[bool] = data.get('deaf', False) or data.get('self_deaf', False)
         self.muted: Optional[bool] = data.get('mute', False) or data.get('self_mute', False)
         self.suppress: Optional[bool] = data.get('suppress', False)

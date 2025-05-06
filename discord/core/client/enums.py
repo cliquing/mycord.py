@@ -13,7 +13,7 @@ class SpeakingState(Enum):
         return self.value
     
 
-class Status(Enum):
+class StatusType(Enum):
     online = 'online'
     offline = 'offline'
     idle = 'idle'

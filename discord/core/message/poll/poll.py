@@ -39,7 +39,7 @@ from ..enums import MessageType
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ..message import Message
+    from ..messages import Message
     from ....abc import Snowflake
     from ...state import ConnectionState
     from ...guild.member import Member

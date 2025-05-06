@@ -1,23 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional
 
-from .activity.activity import create_activity
-from ...utils.utils import MISSING, _get_as_snowflake, _RawReprMixin
+from ...utils.utils import MISSING
 from ...utils.enums import try_enum
-from .enums import Status
+from .enums import StatusType
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .activity.activity import ActivityTypes
-    from ..guild.guild import Guild
-    from ..state.state import ConnectionState
-    from .activity.types import ClientStatusPayload, PartialPresenceUpdate
+    from .activity.types import ClientStatusPayload
 
 
-__all__ = (
-    'RawPresenceUpdateEvent',
-    'ClientStatus',
+__all__ = ('ClientStatus',
 )
 
 
@@ -68,9 +62,9 @@ class ClientStatus:
         return self
 
     @property
-    def status(self) -> Status:
+    def status(self) -> StatusType:
         """:class:`Status`: The user's overall status. If the value is unknown, then it will be a :class:`str` instead."""
-        return try_enum(Status, self._status)
+        return try_enum(StatusType, self._status)
 
     @property
     def raw_status(self) -> str:
@@ -78,19 +72,19 @@ class ClientStatus:
         return self._status
 
     @property
-    def mobile_status(self) -> Status:
+    def mobile_status(self) -> StatusType:
         """:class:`Status`: The user's status on a mobile device, if applicable."""
-        return try_enum(Status, self.mobile or 'offline')
+        return try_enum(StatusType, self.mobile or 'offline')
 
     @property
-    def desktop_status(self) -> Status:
+    def desktop_status(self) -> StatusType:
         """:class:`Status`: The user's status on the desktop client, if applicable."""
-        return try_enum(Status, self.desktop or 'offline')
+        return try_enum(StatusType, self.desktop or 'offline')
 
     @property
-    def web_status(self) -> Status:
+    def web_status(self) -> StatusType:
         """:class:`Status`: The user's status on the web client, if applicable."""
-        return try_enum(Status, self.web or 'offline')
+        return try_enum(StatusType, self.web or 'offline')
 
     def is_on_mobile(self) -> bool:
         """:class:`bool`: A helper function that determines if a user is active on a mobile device."""

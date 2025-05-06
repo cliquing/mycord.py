@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     from .types import (
-        Component as ComponentPayload, ButtonComponentPayload, SelectMenuPayload, SelectOptionPayload, ActionRowPayload, TextInputPayload,
+        ComponentPayload, ButtonComponentPayload, SelectMenuPayload, SelectOptionPayload, ActionRowPayload, TextInputPayload,
         ActionRowChildComponent as ActionRowChildComponentPayload,
         SelectDefaultValues as SelectDefaultValuesPayload,
     )

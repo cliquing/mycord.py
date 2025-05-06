@@ -35,10 +35,7 @@ from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
     from ...core.state import ConnectionState
 
-    from .types import (
-        Team as TeamPayload,
-        TeamMember as TeamMemberPayload,
-    )
+    from .types import TeamPayload, TeamMemberPayload
 
 __all__ = (
     'Team',

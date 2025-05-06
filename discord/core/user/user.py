@@ -26,7 +26,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import discord.abc
+
+from ... import abc
 from ..asset import Asset
 from ...utils.color import Colour
 from .enums import DefaultAvatar
@@ -35,12 +36,10 @@ from ...utils.utils import snowflake_time, _bytes_to_base64_data, MISSING, _get_
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-
     from datetime import datetime
-
     from ..guild.channel import DMChannel
-    from ..guild.guild import Guild
-    from ..message.message import Message
+    from ..guild import Guild
+    from ..message.messages import Message
     from ..state.state import ConnectionState
     from ..guild.channel.types import DMChannelPayload
     from .types import PartialUserPayload, UserPayload, AvatarDecorationData
@@ -479,7 +478,7 @@ class ClientUser(BaseUser):
         return list(self._state.guilds)
 
 
-class User(BaseUser, discord.abc.Messageable):
+class User(BaseUser, abc.Messageable):
     """Represents a Discord user.
 
     .. container:: operations

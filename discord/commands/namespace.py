@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, NamedTupl
 from ..core.guild.member import Member
 from ..utils.object import Object
 from ..core.guild.role import Role
-from ..core.message.message import Message, Attachment
+from ..core.message.messages import Message, Attachment
 from ..core.guild.channel import PartialMessageable
 from ..core.appinfo.enums import AppCommandOptionType
 from .models import AppCommandChannel, AppCommandThread

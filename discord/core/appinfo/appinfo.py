@@ -35,7 +35,7 @@ from ...utils.utils import MISSING
 if TYPE_CHECKING:
     from typing import Dict, Any
 
-    from ...core.guild.guild import Guild
+    from ..guild import Guild
     from .types import (AppInfoPayload, PartialAppInfoPayload, TeamPayload, InstallParamsPayload,
         AppIntegrationTypeConfig as AppIntegrationTypeConfigPayload,
     )

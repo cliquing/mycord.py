@@ -1,3 +1,4 @@
+from ...utils.enums import Enum
 
 class WebhookType(Enum):
     incoming = 1

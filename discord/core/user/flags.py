@@ -1,6 +1,10 @@
 from typing import List
-from ..flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
+from ...utils.flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
 from .enums import UserFlags
+
+__all__ = (
+    'PublicUserFlags',
+)
 
 
 @fill_with_flags()

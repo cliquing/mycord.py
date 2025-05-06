@@ -34,7 +34,7 @@ __all__ = (
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ...types import AllowedMentions as AllowedMentionsPayload
+    from .types import AllowedMentionsPayload
     from ...abc import Snowflake
 
 

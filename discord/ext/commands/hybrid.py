@@ -38,10 +38,12 @@ from typing import (
     Optional,
 )
 
-import discord
+from ...core import Interaction, Attachment
+
+
 import inspect
-from discord import app_commands
-from discord.utils import MISSING, maybe_coroutine, async_all
+from ... import commands as app_commands
+from ...utils.utils import MISSING, maybe_coroutine, async_all
 from .core import Command, Group
 from .errors import BadArgument, CommandRegistrationError, CommandError, HybridCommandError, ConversionError, DisabledCommand
 from .converter import Converter, Range, Greedy, run_converters, CONVERTER_MAPPING
@@ -55,7 +57,7 @@ if TYPE_CHECKING:
     from ._types import ContextT, Coro, BotT
     from .bot import Bot
     from .context import Context
-    from discord.app_commands.commands import (
+    from ...commands.commands import (
         Check as AppCommandCheck,
         AutocompleteCallback,
         ChoiceT,
@@ -127,10 +129,10 @@ class ConverterTransformer(app_commands.Transformer):
         except AttributeError:
             pass
         else:
-            if module is not None and (module.startswith('discord.') and not module.endswith('converter')):
+            if module is not None and (module.startswith('') and not module.endswith('converter')):
                 self.converter = CONVERTER_MAPPING.get(converter, converter)
 
-    async def transform(self, interaction: discord.Interaction, value: str, /) -> Any:
+    async def transform(self, interaction: Interaction, value: str, /) -> Any:
         ctx = interaction._baton
         converter = self.converter
         ctx.current_parameter = self.parameter
@@ -154,7 +156,7 @@ class CallableTransformer(app_commands.Transformer):
         super().__init__()
         self.func: Callable[[str], Any] = func
 
-    async def transform(self, interaction: discord.Interaction, value: str, /) -> Any:
+    async def transform(self, interaction: Interaction, value: str, /) -> Any:
         try:
             return self.func(value)
         except CommandError:
@@ -169,7 +171,7 @@ class GreedyTransformer(app_commands.Transformer):
         self.converter: Any = converter
         self.parameter: Parameter = parameter
 
-    async def transform(self, interaction: discord.Interaction, value: str, /) -> Any:
+    async def transform(self, interaction: Interaction, value: str, /) -> Any:
         view = StringView(value)
         result = []
         ctx = interaction._baton
@@ -211,8 +213,8 @@ def replace_parameter(
             # However, in here, it probably makes sense to make it required.
             # I'm unsure how to allow the user to choose right now.
             inner = converter.converter
-            if inner is discord.Attachment:
-                raise TypeError('discord.Attachment with Greedy is not supported in hybrid commands')
+            if inner is Attachment:
+                raise TypeError('Attachment with Greedy is not supported in hybrid commands')
 
             param = param.replace(annotation=GreedyTransformer(inner, original))
         elif is_flag(converter):
@@ -302,7 +304,7 @@ def replace_parameters(
     return list(params.values())
 
 
-class HybridAppCommand(discord.app_commands.Command[CogT, P, T]):
+class HybridAppCommand(app_commands.Command[CogT, P, T]):
     __commands_is_hybrid_app_command__: ClassVar[bool] = True
 
     def __init__(
@@ -345,7 +347,7 @@ class HybridAppCommand(discord.app_commands.Command[CogT, P, T]):
         return self._copy_with(parent=self.parent, binding=self.binding, bindings=bindings)
 
     async def _transform_arguments(
-        self, interaction: discord.Interaction, namespace: app_commands.Namespace
+        self, interaction: Interaction, namespace: app_commands.Namespace
     ) -> Dict[str, Any]:
         values = namespace.__dict__
         transformed_values = {}
@@ -379,7 +381,7 @@ class HybridAppCommand(discord.app_commands.Command[CogT, P, T]):
 
         return transformed_values
 
-    async def _check_can_run(self, interaction: discord.Interaction) -> bool:
+    async def _check_can_run(self, interaction: Interaction) -> bool:
         # Hybrid checks must run like so:
         # - Bot global check once
         # - Bot global check
@@ -432,7 +434,7 @@ class HybridAppCommand(discord.app_commands.Command[CogT, P, T]):
 
         return True
 
-    async def _invoke_with_namespace(self, interaction: discord.Interaction, namespace: app_commands.Namespace) -> Any:
+    async def _invoke_with_namespace(self, interaction: Interaction, namespace: app_commands.Namespace) -> Any:
         # Wrap the interaction into a Context
         bot: Bot = interaction.client  # type: ignore
 
@@ -481,8 +483,8 @@ class HybridAppCommand(discord.app_commands.Command[CogT, P, T]):
 class HybridCommand(Command[CogT, P, T]):
     r"""A class that is both an application command and a regular text command.
 
-    This has the same parameters and attributes as a regular :class:`~discord.ext.commands.Command`.
-    However, it also doubles as an :class:`application command <discord.app_commands.Command>`. In order
+    This has the same parameters and attributes as a regular :class:`~ext.commands.Command`.
+    However, it also doubles as an :class:`application command <app_commands.Command>`. In order
     for this to work, the callbacks must have the same subset that is supported by application
     commands.
 
@@ -561,14 +563,14 @@ class HybridCommand(Command[CogT, P, T]):
     ) -> Callable[[AutocompleteCallback[CogT, ChoiceT]], AutocompleteCallback[CogT, ChoiceT]]:
         """A decorator that registers a coroutine as an autocomplete prompt for a parameter.
 
-        This is the same as :meth:`~discord.app_commands.Command.autocomplete`. It is only
+        This is the same as :meth:`~app_commands.Command.autocomplete`. It is only
         applicable for the application command and doesn't do anything if the command is
         a regular command.
 
         .. note::
 
-            Similar to the :meth:`~discord.app_commands.Command.autocomplete` method, this
-            takes :class:`~discord.Interaction` as a parameter rather than a :class:`Context`.
+            Similar to the :meth:`~app_commands.Command.autocomplete` method, this
+            takes :class:`~Interaction` as a parameter rather than a :class:`Context`.
 
         Parameters
         -----------
@@ -590,8 +592,8 @@ class HybridCommand(Command[CogT, P, T]):
 class HybridGroup(Group[CogT, P, T]):
     r"""A class that is both an application command group and a regular text group.
 
-    This has the same parameters and attributes as a regular :class:`~discord.ext.commands.Group`.
-    However, it also doubles as an :class:`application command group <discord.app_commands.Group>`.
+    This has the same parameters and attributes as a regular :class:`~ext.commands.Group`.
+    However, it also doubles as an :class:`application command group <app_commands.Group>`.
     Note that application commands groups cannot have callbacks associated with them, so the callback
     is only called if it's not invoked as an application command.
 
@@ -609,7 +611,7 @@ class HybridGroup(Group[CogT, P, T]):
         application command groups cannot be invoked, this creates a subcommand within
         the group that can be invoked with the given group callback. If ``None``
         then no fallback command is given. Defaults to ``None``.
-    fallback_locale: Optional[:class:`~discord.app_commands.locale_str`]
+    fallback_locale: Optional[:class:`~app_commands.locale_str`]
         The fallback command name's locale string, if available.
     """
 
@@ -743,7 +745,7 @@ class HybridGroup(Group[CogT, P, T]):
     ) -> Callable[[AutocompleteCallback[CogT, ChoiceT]], AutocompleteCallback[CogT, ChoiceT]]:
         """A decorator that registers a coroutine as an autocomplete prompt for a parameter.
 
-        This is the same as :meth:`~discord.app_commands.Command.autocomplete`. It is only
+        This is the same as :meth:`~app_commands.Command.autocomplete`. It is only
         applicable for the application command and doesn't do anything if the command is
         a regular command.
 
@@ -751,8 +753,8 @@ class HybridGroup(Group[CogT, P, T]):
 
         .. note::
 
-            Similar to the :meth:`~discord.app_commands.Command.autocomplete` method, this
-            takes :class:`~discord.Interaction` as a parameter rather than a :class:`Context`.
+            Similar to the :meth:`~app_commands.Command.autocomplete` method, this
+            takes :class:`~Interaction` as a parameter rather than a :class:`Context`.
 
         Parameters
         -----------
@@ -827,7 +829,7 @@ class HybridGroup(Group[CogT, P, T]):
         with_app_command: bool = True,
         **kwargs: Any,
     ) -> Callable[[CommandCallback[CogT, ContextT, P2, U]], HybridCommand[CogT, P2, U]]:
-        """A shortcut decorator that invokes :func:`~discord.ext.commands.hybrid_command` and adds it to
+        """A shortcut decorator that invokes :func:`~ext.commands.hybrid_command` and adds it to
         the internal command list via :meth:`add_command`.
 
         Returns
@@ -851,7 +853,7 @@ class HybridGroup(Group[CogT, P, T]):
         with_app_command: bool = True,
         **kwargs: Any,
     ) -> Callable[[CommandCallback[CogT, ContextT, P2, U]], HybridGroup[CogT, P2, U]]:
-        """A shortcut decorator that invokes :func:`~discord.ext.commands.hybrid_group` and adds it to
+        """A shortcut decorator that invokes :func:`~ext.commands.hybrid_group` and adds it to
         the internal command list via :meth:`~.GroupMixin.add_command`.
 
         Returns
@@ -878,16 +880,16 @@ def hybrid_command(
     r"""A decorator that transforms a function into a :class:`.HybridCommand`.
 
     A hybrid command is one that functions both as a regular :class:`.Command`
-    and one that is also a :class:`app_commands.Command <discord.app_commands.Command>`.
+    and one that is also a :class:`app_commands.Command <app_commands.Command>`.
 
     The callback being attached to the command must be representable as an
     application command callback. Converters are silently converted into a
-    :class:`~discord.app_commands.Transformer` with a
-    :attr:`discord.AppCommandOptionType.string` type.
+    :class:`~app_commands.Transformer` with a
+    :attr:`AppCommandOptionType.string` type.
 
     Checks and error handlers are dispatched and called as-if they were commands
     similar to :class:`.Command`. This means that they take :class:`Context` as
-    a parameter rather than :class:`discord.Interaction`.
+    a parameter rather than :class:`Interaction`.
 
     All checks added using the :func:`.check` & co. decorators are added into
     the function. There is no way to supply your own checks through this
@@ -897,7 +899,7 @@ def hybrid_command(
 
     Parameters
     -----------
-    name: Union[:class:`str`, :class:`~discord.app_commands.locale_str`]
+    name: Union[:class:`str`, :class:`~app_commands.locale_str`]
         The name to create the command with. By default this uses the
         function name unchanged.
     with_app_command: :class:`bool`
@@ -929,12 +931,12 @@ def hybrid_group(
 ) -> Callable[[CommandCallback[CogT, ContextT, P, T]], HybridGroup[CogT, P, T]]:
     """A decorator that transforms a function into a :class:`.HybridGroup`.
 
-    This is similar to the :func:`~discord.ext.commands.group` decorator except it creates
+    This is similar to the :func:`~ext.commands.group` decorator except it creates
     a hybrid group instead.
 
     Parameters
     -----------
-    name: Union[:class:`str`, :class:`~discord.app_commands.locale_str`]
+    name: Union[:class:`str`, :class:`~app_commands.locale_str`]
         The name to create the group with. By default this uses the
         function name unchanged.
     with_app_command: :class:`bool`

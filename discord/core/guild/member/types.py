@@ -1,18 +1,17 @@
 
 
-from typing import List, Optional, TypedDict, Union
+from typing import List, Optional, TypedDict
 from ...user.types import UserPayload, AvatarDecorationData
 from typing_extensions import NotRequired
 
+from ....utils.snowflake import Snowflake, SnowflakeList
 
-Snowflake = Union[str, int]
-SnowflakeList = List[Snowflake]
 
-class Nickname(TypedDict):
+class NicknamePayload(TypedDict):
     nick: str
 
 
-class PartialMember(TypedDict):
+class PartialMemberPayload(TypedDict):
     roles: SnowflakeList
     joined_at: str
     deaf: bool
@@ -20,7 +19,7 @@ class PartialMember(TypedDict):
     flags: int
 
 
-class MemberPayload(PartialMember, total=False):
+class MemberPayload(PartialMemberPayload, total=False):
     avatar: str
     user: UserPayload
     nick: str
@@ -32,7 +31,7 @@ class MemberPayload(PartialMember, total=False):
     avatar_decoration_data: NotRequired[AvatarDecorationData]
 
 
-class _OptionalMemberWithUser(PartialMember, total=False):
+class _OptionalMemberWithUser(PartialMemberPayload, total=False):
     avatar: str
     nick: str
     premium_since: Optional[str]

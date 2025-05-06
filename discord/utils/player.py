@@ -40,9 +40,9 @@ from typing import Any, Callable, Generic, IO, Optional, TYPE_CHECKING, Tuple, T
 
 from ..core.client.enums import SpeakingState
 from ..errors import ClientException
-from ..utils.opus import Encoder as OpusEncoder, OPUS_SILENCE
-from ..utils.oggparse import OggStream
-from ..utils.utils import MISSING
+from .opus import Encoder as OpusEncoder, OPUS_SILENCE
+from .oggparse import OggStream
+from .utils import MISSING
 
 if TYPE_CHECKING:
     from typing_extensions import Self

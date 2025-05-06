@@ -42,11 +42,11 @@ __all__ = (
 )
 
 if TYPE_CHECKING:
-    from ..guild import Guild
+    from ..guilds import Guild
     from ..role import Role
     from ...state.state import ConnectionState
     from .types import (
-        IntegrationAccountPayload, IntegrationPayload, StreamIntegrationPayload, BotIntegrationPayload, IntegrationType, IntegrationApplicationPayload, PartialIntegrationPayload,
+        IntegrationAccountPayload, IntegrationPayload, StreamIntegrationPayload, BotIntegrationPayload, IntegrationTypes, IntegrationApplicationPayload, PartialIntegrationPayload,
     )
 
 
@@ -117,7 +117,7 @@ class Integration:
 
     def _from_data(self, data: IntegrationPayload) -> None:
         self.id: int = int(data['id'])
-        self.type: IntegrationType = data['type']
+        self.type: IntegrationTypes = data['type']
         self.name: str = data['name']
         self.account: IntegrationAccount = IntegrationAccount(data['account'])
 
@@ -398,7 +398,7 @@ class PartialIntegration:
 
     def _from_data(self, data: PartialIntegrationPayload) -> None:
         self.id: int = int(data['id'])
-        self.type: IntegrationType = data['type']
+        self.type: IntegrationTypes = data['type']
         self.name: str = data['name']
         self.account: IntegrationAccount = IntegrationAccount(data['account'])
         self.application_id: Optional[int] = _get_as_snowflake(data, 'application_id')

@@ -26,20 +26,20 @@ from __future__ import annotations
 
 
 from typing import Any, Callable, Deque, Dict, Optional, Union, Generic, TypeVar, TYPE_CHECKING
-from discord.enums import Enum
-from discord.abc import PrivateChannel
+from ...utils.enums import Enum
+from ...abc import PrivateChannel
 import time
 import asyncio
 from collections import deque
 
 from .errors import MaxConcurrencyReached
 from .context import Context
-from discord.app_commands import Cooldown as Cooldown
+from ...commands import Cooldown as Cooldown
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ...core.message.message import Message
+    from ...core.message.messages import Message
 
 __all__ = (
     'BucketType',

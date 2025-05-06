@@ -9,37 +9,25 @@ from typing import (
     List,
     Literal,
     Mapping,
-    NamedTuple,
     Optional,
     TYPE_CHECKING,
-    Sequence,
-    Tuple,
     TypeVar,
     Union,
     overload,
 )
 import datetime
 
-import discord.abc
-from ..scheduled_event import ScheduledEvent
-from ....utils.enums import try_enum
+from .... import abc
 from ....utils.permissions import PermissionOverwrite, Permissions
-from ..enums import PrivacyLevel
-from .enums import ChannelType, ForumLayoutType, ForumOrderType, VideoQualityMode, VoiceChannelEffectAnimationType
+from .enums import ChannelType
 
 from ...components.enums import EntityType
 from ....utils.mixins import Hashable
 from ....utils import utils
 from ....utils.utils import MISSING
-from ...asset import Asset
 from ....errors import ClientException
-from .stage_instance import StageInstance
 from ..threads import Thread
-from ...emoji.partial import _EmojiTag, PartialEmoji
-from .flags import ChannelFlags, MessageFlags
-from ...http import handle_message_parameters
 from ....utils.object import Object
-from ..soundboard import BaseSoundboardSound, SoundboardDefaultSound
 
 __all__ = (
     'TextChannel',
@@ -53,23 +41,17 @@ if TYPE_CHECKING:
 
     from ..threads.types import ThreadArchiveDuration
     from ..role import Role
-    from ..member import Member, VoiceState
+    from ..member import Member
     from ....abc import Snowflake, SnowflakeTime
-    from ...message.embeds import Embed
-    from ...message.message import Message, PartialMessage, EmojiInputType
-    from ...message.mentions import AllowedMentions
+    from ...message.messages import Message, PartialMessage
     from ...webhook import Webhook
     from ...state import ConnectionState
-    from ...guild.sticker import GuildSticker, StickerItem
-    from ...message.file import File
-    from ...user.user import ClientUser, User, BaseUser
-    from ..guild import Guild, GuildChannel as GuildChannelType
+    from ...user.user import BaseUser
+    from ..guilds import Guild
 
-    from .types import TextChannelPayload, VoiceChannelPayload, StageChannelPayload, DMChannelPayload, CategoryChannelPayload, GroupChannelPayload, ForumChannelPayload, ForumTagPayload, VoiceChannelEffectPayload, MediaChannelPayload, NewsChannelPayload
+    from .types import TextChannelPayload, NewsChannelPayload
 
     from ....utils.snowflake import SnowflakeList
-    from ..soundboard.types import BaseSoundboardSound as BaseSoundboardSoundPayload
-    from ..soundboard import SoundboardSound
 
     OverwriteKeyT = TypeVar('OverwriteKeyT', Role, BaseUser, Object, Union[Role, Member, Object])
 
@@ -77,7 +59,7 @@ if TYPE_CHECKING:
 
 
 
-class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
+class TextChannel(abc.Messageable, abc.GuildChannel, Hashable):
     """Represents a Discord guild text channel.
 
     .. container:: operations
@@ -201,7 +183,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
     def _scheduled_event_entity_type(self) -> Optional[EntityType]:
         return None
 
-    @utils.copy_doc(discord.abc.GuildChannel.permissions_for)
+    @utils.copy_doc(abc.GuildChannel.permissions_for)
     def permissions_for(self, obj: Union[Member, Role], /) -> Permissions:
         base = super().permissions_for(obj)
         self._apply_implicit_permissions(base)
@@ -360,7 +342,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
             # the payload will always be the proper channel payload
             return self.__class__(state=self._state, guild=self.guild, data=payload)  # type: ignore
 
-    @utils.copy_doc(discord.abc.GuildChannel.clone)
+    @utils.copy_doc(abc.GuildChannel.clone)
     async def clone(
         self,
         *,
@@ -512,7 +494,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
         List[:class:`.Message`]
             The list of messages that were deleted.
         """
-        return await discord.abc._purge_helper(
+        return await abc._purge_helper(
             self,
             limit=limit,
             check=check,

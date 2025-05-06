@@ -28,12 +28,12 @@ from typing import List, Literal, Optional, TypedDict
 from typing_extensions import NotRequired
 
 from ....utils.snowflake import Snowflake
-from ...message import Message
+from ...message import MessagePayload
 
 ThreadType = Literal[10, 11, 12]
 ThreadArchiveDuration = Literal[60, 1440, 4320, 10080]
 
-from ..channel.types import ChannelType
+from ..channel.types import ChannelTypes
 
 class ThreadMemberPayload(TypedDict):
     id: Snowflake
@@ -77,8 +77,8 @@ class ThreadPaginationPayload(TypedDict):
     has_more: bool
 
 
-class ForumThread(ThreadPayload):
-    message: Message
+class ForumThreadPayload(ThreadPayload):
+    message: MessagePayload
 
 
 
@@ -95,7 +95,7 @@ class ThreadDeleteEvent(TypedDict):
     id: Snowflake
     guild_id: Snowflake
     parent_id: Snowflake
-    type: ChannelType
+    type: ChannelTypes
 
 
 class ThreadListSyncEvent(TypedDict):
@@ -115,3 +115,6 @@ class ThreadMembersUpdate(TypedDict):
     member_count: int
     added_members: NotRequired[List[ThreadMemberPayload]]
     removed_member_ids: NotRequired[List[Snowflake]]
+
+
+

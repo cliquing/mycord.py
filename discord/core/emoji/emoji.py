@@ -39,7 +39,7 @@ __all__ = ('Emoji',
 
 if TYPE_CHECKING:
     from .types import EmojiPayload
-    from ..guild.guild import Guild
+    from ..guild import Guild
     from ..state.state import ConnectionState
     from ...abc import Snowflake
     from ..guild.role import Role

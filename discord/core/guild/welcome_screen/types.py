@@ -28,12 +28,12 @@ from typing import List, Optional, TypedDict
 from ....utils.snowflake import Snowflake
 
 
-class WelcomeScreen(TypedDict):
+class WelcomeScreenPayload(TypedDict):
     description: str
-    welcome_channels: List[WelcomeScreenChannel]
+    welcome_channels: List[WelcomeScreenChannelPayload]
 
 
-class WelcomeScreenChannel(TypedDict):
+class WelcomeScreenChannelPayload(TypedDict):
     channel_id: Snowflake
     description: str
     emoji_id: Optional[Snowflake]

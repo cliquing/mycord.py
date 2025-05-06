@@ -4,7 +4,7 @@ from typing import Literal, Optional, TypedDict
 from typing_extensions import NotRequired
 
 from ...utils.snowflake import Snowflake
-from ..user import User
+from ..user import UserPayload
 from ..guild.channel.types import PartialChannelPayload
 
 
@@ -14,7 +14,7 @@ class SourceGuildPayload(TypedDict):
     icon: str
 
 
-WebhookType = Literal[1, 2, 3]
+WebhookTypes = Literal[1, 2, 3]
 
 class FollowerWebhookPayload(TypedDict):
     channel_id: Snowflake
@@ -25,9 +25,9 @@ class FollowerWebhookPayload(TypedDict):
 
 class PartialWebhookPayload(TypedDict):
     id: Snowflake
-    type: WebhookType
+    type: WebhookTypes
     guild_id: NotRequired[Snowflake]
-    user: NotRequired[User]
+    user: NotRequired[UserPayload]
     token: NotRequired[str]
 
 
@@ -40,3 +40,8 @@ class _FullWebhook(TypedDict, total=False):
 
 class WebhookPayload(PartialWebhookPayload, _FullWebhook):
     ...
+
+
+class WebhooksUpdateEvent(TypedDict):
+    guild_id: Snowflake
+    channel_id: Snowflake

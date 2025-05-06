@@ -25,10 +25,10 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from typing import Literal, Optional, TypedDict, Union
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, Required
 
 from ....utils.snowflake import Snowflake
-from ...user import User
+from ...user import UserPayload
 
 
 class IntegrationApplicationPayload(TypedDict):
@@ -37,7 +37,7 @@ class IntegrationApplicationPayload(TypedDict):
     icon: Optional[str]
     description: str
     summary: str
-    bot: NotRequired[User]
+    bot: NotRequired[UserPayload]
 
 
 class IntegrationAccountPayload(TypedDict):
@@ -51,19 +51,19 @@ IntegrationExpireBehavior = Literal[0, 1]
 class PartialIntegrationPayload(TypedDict):
     id: Snowflake
     name: str
-    type: IntegrationType
+    type: IntegrationTypes
     account: IntegrationAccountPayload
     application_id: Snowflake
 
 
-IntegrationType = Literal['twitch', 'youtube', 'discord', 'guild_subscription']
+IntegrationTypes = Literal['twitch', 'youtube', 'discord', 'guild_subscription']
 
 
 class BaseIntegrationPayload(PartialIntegrationPayload):
     enabled: bool
     syncing: bool
     synced_at: str
-    user: User
+    user: UserPayload
     expire_behavior: IntegrationExpireBehavior
     expire_grace_period: int
 
@@ -80,3 +80,24 @@ class BotIntegrationPayload(BaseIntegrationPayload):
 
 
 IntegrationPayload = Union[BaseIntegrationPayload, StreamIntegrationPayload, BotIntegrationPayload]
+
+
+class _IntegrationEvent(BaseIntegrationPayload, total=False):
+    guild_id: Required[Snowflake]
+    role_id: Optional[Snowflake]
+    enable_emoticons: bool
+    subscriber_count: int
+    revoked: bool
+    application: IntegrationApplicationPayload
+
+
+IntegrationCreateEvent = IntegrationUpdateEvent = _IntegrationEvent
+
+
+class IntegrationDeleteEvent(TypedDict):
+    id: Snowflake
+    guild_id: Snowflake
+    application_id: NotRequired[Snowflake]
+
+
+

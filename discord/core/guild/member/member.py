@@ -30,19 +30,18 @@ import itertools
 from operator import attrgetter
 from typing import Any, Awaitable, Callable, Collection, Dict, List, Optional, TYPE_CHECKING, Tuple, TypeVar, Union
 
-import discord.abc
-
+from .... import abc
 from ....utils import utils
 from ...asset import Asset
 from ....utils.utils import MISSING
 from ...user.user import BaseUser, ClientUser, User, _UserTag
 from ....utils.permissions import Permissions
-from .enums import Status
+from ...client import StatusType
 from ....errors import ClientException
 from ....utils.color import Colour
 from ....utils.object import Object
 from .flags import MemberFlags
-from ...client.status import ClientStatus
+from ...client import ClientStatus
 
 __all__ = (
     'VoiceState',
@@ -56,9 +55,9 @@ if TYPE_CHECKING:
 
     from ..channel import DMChannel, VoiceChannel, StageChannel
     from ...user.flags import PublicUserFlags
-    from ..guild import Guild
+    from ..guilds import Guild
     from ...client.activity.activity import ActivityTypes
-    from ...client.raw_models import RawPresenceUpdateEvent
+    from ...client import RawPresenceUpdateEvent
     from .types import (MemberWithUser as MemberWithUserPayload, MemberPayload,
         UserWithMember as UserWithMemberPayload,
     )
@@ -164,7 +163,7 @@ def flatten_user(cls: T) -> T:
 
 
 @flatten_user
-class Member(discord.abc.Messageable, _UserTag):
+class Member(abc.Messageable, _UserTag):
     """Represents a Discord member to a :class:`Guild`.
 
     This implements a lot of the functionality of :class:`User`.
@@ -432,7 +431,7 @@ class Member(discord.abc.Messageable, _UserTag):
             return to_return, u
 
     @property
-    def status(self) -> Status:
+    def status(self) -> StatusType:
         """:class:`Status`: The member's overall status. If the value is unknown, then it will be a :class:`str` instead."""
         return self.client_status.status
 
@@ -445,22 +444,22 @@ class Member(discord.abc.Messageable, _UserTag):
         return self.client_status._status
 
     @status.setter
-    def status(self, value: Status) -> None:
+    def status(self, value: StatusType) -> None:
         # internal use only
         self.client_status._status = str(value)
 
     @property
-    def mobile_status(self) -> Status:
+    def mobile_status(self) -> StatusType:
         """:class:`Status`: The member's status on a mobile device, if applicable."""
         return self.client_status.mobile_status
 
     @property
-    def desktop_status(self) -> Status:
+    def desktop_status(self) -> StatusType:
         """:class:`Status`: The member's status on the desktop client, if applicable."""
         return self.client_status.desktop_status
 
     @property
-    def web_status(self) -> Status:
+    def web_status(self) -> StatusType:
         """:class:`Status`: The member's status on the web client, if applicable."""
         return self.client_status.web_status
 
@@ -749,7 +748,7 @@ class Member(discord.abc.Messageable, _UserTag):
         mute: bool = MISSING,
         deafen: bool = MISSING,
         suppress: bool = MISSING,
-        roles: Collection[discord.abc.Snowflake] = MISSING,
+        roles: Collection[abc.Snowflake] = MISSING,
         voice_channel: Optional[VocalGuildChannel] = MISSING,
         timed_out_until: Optional[datetime.datetime] = MISSING,
         bypass_verification: bool = MISSING,

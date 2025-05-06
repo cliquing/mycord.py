@@ -1,52 +1,29 @@
 from __future__ import annotations
 
-from typing import (
-    Any,
-    AsyncIterator,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Literal,
-    Mapping,
-    NamedTuple,
-    Optional,
-    TYPE_CHECKING,
-    Sequence,
-    Tuple,
-    TypeVar,
-    Union,
-    overload,
+from typing import (Any, AsyncIterator,
+    Dict, List, Literal, Mapping, NamedTuple, Optional, TYPE_CHECKING, Sequence, TypeVar, Union, overload,
 )
 import datetime
 
-import discord.abc
 
-from my.cord.discord.core.guild.channel.voice import ThreadWithMessage
-from ..scheduled_event import ScheduledEvent
 from ....utils.permissions import PermissionOverwrite, Permissions
 from .enums import (
     ChannelType,
     ForumLayoutType,
     ForumOrderType,
-    VideoQualityMode,
-    VoiceChannelEffectAnimationType,
 )
 from ....utils.object import Hashable
 from ....utils import utils
 from ....utils.utils import MISSING
 from ...asset import Asset
-from ....errors import ClientException
-from .stage_instance import StageInstance
 from ..threads import Thread
 from ...emoji.partial import _EmojiTag, PartialEmoji
 from .flags import ChannelFlags
 from ...message.flags import MessageFlags
 from ...http import handle_message_parameters
 from ....utils.object import Object
-from ..soundboard import BaseSoundboardSound, SoundboardDefaultSound
 from ....utils.enums import try_enum
-from ..enums import PrivacyLevel, EntityType
+from ..enums import EntityType
 
 __all__ = (
     'DMChannel',
@@ -63,36 +40,37 @@ if TYPE_CHECKING:
 
     from ..threads.types import ThreadArchiveDuration
     from ..role import Role
-    from ..member import Member, VoiceState
-    from ....abc import Snowflake, SnowflakeTime
+    from ..member import Member
+    from ....abc import Snowflake
     from ...message.embeds import Embed
-    from ...message.message import Message, PartialMessage, EmojiInputType
+    from ...message.messages import PartialMessage, EmojiInputType
     from ...message.mentions import AllowedMentions
     from ...webhook import Webhook
     from ...state import ConnectionState
     from ..sticker import GuildSticker, StickerItem
     from ...message.file import File
     from ...user.user import ClientUser, User, BaseUser
-    from ..guild import Guild, GuildChannel as GuildChannelType
+    from ..guilds import Guild, GuildChannel as GuildChannelType
     from ....ui.view import View
+    from ...message import Message
 
-    from .types import TextChannelPayload, VoiceChannelPayload, StageChannelPayload, DMChannelPayload, CategoryChannelPayload, GroupChannelPayload, ForumChannelPayload, ForumTagPayload, VoiceChannelEffectPayload, MediaChannelPayload, NewsChannelPayload
+    from .types import DMChannelPayload, CategoryChannelPayload, GroupChannelPayload, ForumChannelPayload, ForumTagPayload, MediaChannelPayload
 
     from ....utils.snowflake import SnowflakeList
-    from ..soundboard.types import BaseSoundboardSound as BaseSoundboardSoundPayload
-    from ..soundboard import SoundboardSound
 
     OverwriteKeyT = TypeVar('OverwriteKeyT', Role, BaseUser, Object, Union[Role, Member, Object])
 
     from .voice import VoiceChannel, StageChannel
     from .text import TextChannel
 
+from .... import abc
+
+class ThreadWithMessage(NamedTuple):
+    thread: Thread
+    message: Message
 
 
-
-
-
-class CategoryChannel(discord.abc.GuildChannel, Hashable):
+class CategoryChannel(abc.GuildChannel, Hashable):
     """Represents a Discord channel category.
 
     These are useful to group channels to logical compartments.
@@ -169,7 +147,7 @@ class CategoryChannel(discord.abc.GuildChannel, Hashable):
         """:class:`bool`: Checks if the category is NSFW."""
         return self.nsfw
 
-    @utils.copy_doc(discord.abc.GuildChannel.clone)
+    @utils.copy_doc(abc.GuildChannel.clone)
     async def clone(
         self,
         *,
@@ -253,7 +231,7 @@ class CategoryChannel(discord.abc.GuildChannel, Hashable):
             # the payload will always be the proper channel payload
             return self.__class__(state=self._state, guild=self.guild, data=payload)  # type: ignore
 
-    @utils.copy_doc(discord.abc.GuildChannel.move)
+    @utils.copy_doc(abc.GuildChannel.move)
     async def move(self, **kwargs: Any) -> None:
         kwargs.pop('category', None)
         await super().move(**kwargs)
@@ -448,7 +426,7 @@ class ForumTag(Hashable):
         return self.name
 
 
-class ForumChannel(discord.abc.GuildChannel, Hashable):
+class ForumChannel(abc.GuildChannel, Hashable):
     """Represents a Discord guild forum channel.
 
     .. versionadded:: 2.0
@@ -616,7 +594,7 @@ class ForumChannel(discord.abc.GuildChannel, Hashable):
     def _scheduled_event_entity_type(self) -> Optional[EntityType]:
         return None
 
-    @utils.copy_doc(discord.abc.GuildChannel.permissions_for)
+    @utils.copy_doc(abc.GuildChannel.permissions_for)
     def permissions_for(self, obj: Union[Member, Role], /) -> Permissions:
         base = super().permissions_for(obj)
         self._apply_implicit_permissions(base)
@@ -700,7 +678,7 @@ class ForumChannel(discord.abc.GuildChannel, Hashable):
         """
         return self._type == ChannelType.media.value
 
-    @utils.copy_doc(discord.abc.GuildChannel.clone)
+    @utils.copy_doc(abc.GuildChannel.clone)
     async def clone(
         self,
         *,
@@ -1229,7 +1207,7 @@ class ForumChannel(discord.abc.GuildChannel, Hashable):
             before_timestamp = update_before(threads[-1])
 
 
-class DMChannel(discord.abc.Messageable, discord.abc.PrivateChannel, Hashable):
+class DMChannel(abc.Messageable, abc.PrivateChannel, Hashable):
     """Represents a Discord direct message channel.
 
     .. container:: operations
@@ -1394,7 +1372,7 @@ class DMChannel(discord.abc.Messageable, discord.abc.PrivateChannel, Hashable):
         return PartialMessage(channel=self, id=message_id)
 
 
-class GroupChannel(discord.abc.Messageable, discord.abc.PrivateChannel, Hashable):
+class GroupChannel(abc.Messageable, abc.PrivateChannel, Hashable):
     """Represents a Discord group channel.
 
     .. container:: operations
@@ -1531,7 +1509,7 @@ class GroupChannel(discord.abc.Messageable, discord.abc.PrivateChannel, Hashable
 
         Parameters
         -----------
-        obj: :class:`~discord.abc.Snowflake`
+        obj: :class:`~abc.Snowflake`
             The user to check permissions for.
 
         Returns
@@ -1564,7 +1542,7 @@ class GroupChannel(discord.abc.Messageable, discord.abc.PrivateChannel, Hashable
         await self._state.http.leave_group(self.id)
 
 
-class PartialMessageable(discord.abc.Messageable, Hashable):
+class PartialMessageable(abc.Messageable, Hashable):
     """Represents a partial messageable to aid with working messageable channels when
     only a channel ID is present.
 

@@ -27,7 +27,7 @@ from __future__ import annotations
 from typing import Dict, List, Literal, Optional, TypedDict, Union
 from typing_extensions import NotRequired, Required
 
-from ..core.guild.channel.types import ChannelType
+from ..core.guild.channel.types import ChannelTypes
 from ..utils.snowflake import Snowflake
 from ..core.interaction import InteractionContextType
 
@@ -91,7 +91,7 @@ class _BooleanApplicationCommandOption(_BaseValueApplicationCommandOption):
 
 class _ChannelApplicationCommandOptionChoice(_BaseApplicationCommandOption):
     type: Literal[7]
-    channel_types: NotRequired[List[ChannelType]]
+    channel_types: NotRequired[List[ChannelTypes]]
 
 
 class _NonChannelSnowflakeApplicationCommandOptionChoice(_BaseValueApplicationCommandOption):

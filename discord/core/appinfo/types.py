@@ -28,7 +28,6 @@ from typing import Literal, Dict, TypedDict, List, Optional
 from typing_extensions import NotRequired
 
 from ...core.user.types import UserPayload, PartialUserPayload
-from .team import Team
 from ...utils.snowflake import Snowflake
 from ...core.emoji.types import EmojiPayload
 
@@ -64,7 +63,7 @@ class AppInfoPayload(BaseAppInfoPayload):
     owner: UserPayload
     bot_public: bool
     bot_require_code_grant: bool
-    team: NotRequired[Team]
+    team: NotRequired[TeamPayload]
     guild_id: NotRequired[Snowflake]
     primary_sku_id: NotRequired[Snowflake]
     slug: NotRequired[str]

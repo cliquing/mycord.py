@@ -29,7 +29,7 @@ import logging
 import struct
 from typing import Any, Callable, List, Optional, TYPE_CHECKING, Tuple, Union
 
-from . import opus
+from ...utils import opus
 from ..gateway.gateway import *
 from ...errors import ClientException
 from ...utils.player import AudioPlayer, AudioSource
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from ..user.user import ClientUser
     from ...utils.opus import Encoder, APPLICATION_CTL, BAND_CTL, SIGNAL_CTL
     from ..guild.channel import StageChannel, VoiceChannel
-    from . import abc
+    from ... import abc
 
 
     from ..state.types import GuildVoiceStatePayload, VoiceServerUpdatePayload, SupportedModes

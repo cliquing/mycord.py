@@ -43,17 +43,13 @@ import inspect
 import os
 
 from .item import Item, ItemCallbackType
-from ..other.components.enums import ComponentType, SelectDefaultValueType
+from ..core.components.enums import ComponentType, SelectDefaultValueType
 from ..core.guild.channel.enums import ChannelType
 from ..core.emoji.partial import PartialEmoji
 from ..core.emoji.emoji import Emoji
-from ..utils import MISSING, _human_join
-from ..other.components.components import (
-    SelectOption,
-    SelectMenu,
-    SelectDefaultValue,
-)
-from ..app_commands.namespace import Namespace
+from ..utils.utils import MISSING, _human_join
+from ..core.components.components import SelectOption, SelectMenu, SelectDefaultValue
+from ..commands.namespace import Namespace
 from ..core.guild.member.member import Member
 from ..utils.object import Object
 from ..core.guild.role import Role
@@ -74,9 +70,9 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias, TypeGuard
 
     from .view import View
-    from ..other.components.types import SelectMenu as SelectMenuPayload
+    from ..core.components.types import SelectMenuPayload
     from ..core.interaction.types import SelectMessageComponentInteractionData
-    from ..app_commands import AppCommandChannel, AppCommandThread
+    from ..commands import AppCommandChannel, AppCommandThread
     from ..core.interaction.interactions import Interaction
 
     ValidSelectType: TypeAlias = Literal[
@@ -134,7 +130,7 @@ def _handle_select_defaults(
     if not defaults or defaults is MISSING:
         return []
 
-    from ..app_commands import AppCommandChannel, AppCommandThread
+    from ..commands import AppCommandChannel, AppCommandThread
 
     cls_to_type: Dict[Type[ValidDefaultValues], SelectDefaultValueType] = {
         User: SelectDefaultValueType.user,

@@ -30,12 +30,12 @@ from ...user.types import UserPayload
 from ...guild.types import GuildPayload
 
 
-class CreateTemplate(TypedDict):
+class CreateTemplatePayload(TypedDict):
     name: str
     icon: Optional[bytes]
 
 
-class Template(TypedDict):
+class TemplatePayload(TypedDict):
     code: str
     name: str
     description: Optional[str]

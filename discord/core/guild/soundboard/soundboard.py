@@ -37,12 +37,11 @@ if TYPE_CHECKING:
     import datetime
     from typing import Dict, Any
 
-    from .types import (BaseSoundboardSound as BaseSoundboardSoundPayload,
-        SoundboardDefaultSound as SoundboardDefaultSoundPayload, SoundboardSoundPayload,
-    )
+    from .types import BaseSoundboardSoundPayload, SoundboardDefaultSoundPayload, SoundboardSoundPayload
+    
     from ...state import ConnectionState
-    from ...guild import Guild
-    from ...message.message import EmojiInputType
+    from ..guilds import Guild
+    from ...message.messages import EmojiInputType
 
 __all__ = ('BaseSoundboardSound', 'SoundboardDefaultSound', 'SoundboardSound')
 

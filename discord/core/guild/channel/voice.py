@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import (
     Any,
-    AsyncIterator,
     Callable,
     Dict,
     Iterable,
@@ -12,7 +11,6 @@ from typing import (
     NamedTuple,
     Optional,
     TYPE_CHECKING,
-    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -20,23 +18,19 @@ from typing import (
 )
 import datetime
 
-import discord.abc
+from .... import abc
 from ..scheduled_event import ScheduledEvent
 from ....utils.permissions import PermissionOverwrite, Permissions
 from ..enums import PrivacyLevel
-from .enums import ChannelType, ForumLayoutType, ForumOrderType, VideoQualityMode, VoiceChannelEffectAnimationType
+from .enums import ChannelType, VideoQualityMode, VoiceChannelEffectAnimationType
 from ...components.enums import EntityType
 
 from ....utils.mixins import Hashable
 from ....utils import utils
 from ....utils.utils import MISSING
-from ...asset import Asset
 from ....errors import ClientException
 from .stage_instance import StageInstance
-from ..threads import Thread
-from ...emoji.partial import _EmojiTag, PartialEmoji
-from .flags import ChannelFlags
-from ...http import handle_message_parameters
+from ...emoji.partial import PartialEmoji
 from ....utils.object import Object
 from ..soundboard import BaseSoundboardSound, SoundboardDefaultSound
 
@@ -55,23 +49,18 @@ __all__ = (
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from ..threads import ThreadArchiveDuration
     from ..role import Role
     from ..member import Member, VoiceState
     from ....abc import Snowflake, SnowflakeTime
-    from ...message.embeds import Embed
-    from ...message.message import Message, PartialMessage, EmojiInputType
-    from ...message.mentions import AllowedMentions
+    from ...message.messages import Message, PartialMessage
     from ...webhook import Webhook
     from ...state import ConnectionState
-    from ..sticker import GuildSticker, StickerItem
-    from ...user.user import ClientUser, User, BaseUser
-    from ..guild import Guild, GuildChannel as GuildChannelType
-    from ....ui.view import View
+    from ...user.user import BaseUser
+    from ..guilds import Guild
 
-    from .types import TextChannelPayload, VoiceChannelPayload, StageChannelPayload, DMChannelPayload, CategoryChannelPayload, GroupChannelPayload, ForumChannelPayload, ForumTagPayload, VoiceChannelEffectPayload, MediaChannelPayload
+    from .types import VoiceChannelPayload, StageChannelPayload, VoiceChannelEffectPayload
     from ....utils.snowflake import SnowflakeList
-    from ..soundboard.types import BaseSoundboardSound as BaseSoundboardSoundPayload
+    from ..soundboard.types import BaseSoundboardSoundPayload
     from ..soundboard import SoundboardSound
 
     OverwriteKeyT = TypeVar('OverwriteKeyT', Role, BaseUser, Object, Union[Role, Member, Object])
@@ -79,9 +68,7 @@ if TYPE_CHECKING:
 
 
 
-class ThreadWithMessage(NamedTuple):
-    thread: Thread
-    message: Message
+
 
 
 class VoiceChannelEffectAnimation(NamedTuple):
@@ -159,7 +146,7 @@ class VoiceChannelEffect:
 
 
 
-class VocalGuildChannel(discord.abc.Messageable, discord.abc.Connectable, discord.abc.GuildChannel, Hashable):
+class VocalGuildChannel(abc.Messageable, abc.Connectable, abc.GuildChannel, Hashable):
     __slots__ = (
         'name',
         'id',
@@ -259,7 +246,7 @@ class VocalGuildChannel(discord.abc.Messageable, discord.abc.Connectable, discor
         """
         return [event for event in self.guild.scheduled_events if event.channel_id == self.id]
 
-    @utils.copy_doc(discord.abc.GuildChannel.permissions_for)
+    @utils.copy_doc(abc.GuildChannel.permissions_for)
     def permissions_for(self, obj: Union[Member, Role], /) -> Permissions:
         base = super().permissions_for(obj)
         self._apply_implicit_permissions(base)
@@ -442,7 +429,7 @@ class VocalGuildChannel(discord.abc.Messageable, discord.abc.Connectable, discor
             The list of messages that were deleted.
         """
 
-        return await discord.abc._purge_helper(
+        return await abc._purge_helper(
             self,
             limit=limit,
             check=check,
@@ -519,7 +506,7 @@ class VocalGuildChannel(discord.abc.Messageable, discord.abc.Connectable, discor
         data = await self._state.http.create_webhook(self.id, name=str(name), avatar=avatar, reason=reason)
         return Webhook.from_state(data, state=self._state)
 
-    @utils.copy_doc(discord.abc.GuildChannel.clone)
+    @utils.copy_doc(abc.GuildChannel.clone)
     async def clone(
         self, *, name: Optional[str] = None, category: Optional[CategoryChannel] = None, reason: Optional[str] = None
     ) -> Self:

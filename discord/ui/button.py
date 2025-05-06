@@ -30,9 +30,9 @@ import os
 
 
 from .item import Item, ItemCallbackType
-from ..other.components.enums import ButtonStyle, ComponentType
+from ..core.components.enums import ButtonStyle, ComponentType
 from ..core.emoji.partial import PartialEmoji, _EmojiTag
-from ..other.components.components import Button as ButtonComponent
+from ..core.components.components import Button as ButtonComponent
 
 __all__ = (
     'Button',
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
     from .view import View
     from ..core.emoji.emoji import Emoji
-    from ..other.components.types import ButtonComponent as ButtonComponentPayload
+    from ..core.components.types import ButtonComponentPayload
 
 V = TypeVar('V', bound='View', covariant=True)
 

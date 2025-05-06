@@ -53,6 +53,7 @@ class _VoiceState(TypedDict):
 class GuildVoiceStatePayload(_VoiceState):
     channel_id: Snowflake
 
+VoiceStateUpdateEvent = GuildVoiceStatePayload
 
 class VoiceStatePayload(_VoiceState, total=False):
     channel_id: Optional[Snowflake]

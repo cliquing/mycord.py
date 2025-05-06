@@ -24,11 +24,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 import inspect
-import discord
 import logging
-from discord import app_commands
-from discord.utils import maybe_coroutine, _to_kebab_case
-
 from typing import (
     Any,
     Callable,
@@ -48,10 +44,16 @@ from typing import (
 
 from ._types import _BaseCommand, BotT
 
+from ...utils import utils
+from ...utils.object import Object
+from ... import commands as app_commands
+from ...utils.utils import MISSING, maybe_coroutine, _to_kebab_case
+from ...core import Interaction
+
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from discord.abc import Snowflake
-    from discord._types import ClientT
+    from ...abc import Snowflake
+    from ..._types import ClientT
 
     from .bot import BotBase
     from .context import Context
@@ -65,7 +67,7 @@ __all__ = (
 
 FuncT = TypeVar('FuncT', bound=Callable[..., Any])
 
-MISSING: Any = discord.utils.MISSING
+MISSING: Any = utils.MISSING
 _log = logging.getLogger(__name__)
 
 
@@ -289,7 +291,7 @@ class Cog(metaclass=CogMeta):
     __cog_is_app_commands_group__: ClassVar[bool] = False
     __cog_app_commands_group__: Optional[app_commands.Group]
     __discord_app_commands_error_handler__: Optional[
-        Callable[[discord.Interaction, app_commands.AppCommandError], Coroutine[Any, Any, None]]
+        Callable[[Interaction, app_commands.AppCommandError], Coroutine[Any, Any, None]]
     ]
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:
@@ -611,7 +613,7 @@ class Cog(metaclass=CogMeta):
         return True
 
     @_cog_special_method
-    def interaction_check(self, interaction: discord.Interaction[ClientT], /) -> bool:
+    def interaction_check(self, interaction: Interaction[ClientT], /) -> bool:
         """A special method that registers as a :func:`discord.app_commands.check`
         for every app command and subcommand in this cog.
 
@@ -644,7 +646,7 @@ class Cog(metaclass=CogMeta):
         pass
 
     @_cog_special_method
-    async def cog_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError) -> None:
+    async def cog_app_command_error(self, interaction: Interaction, error: app_commands.AppCommandError) -> None:
         """|coro|
 
         A special method that is called whenever an error within
@@ -761,7 +763,7 @@ class Cog(metaclass=CogMeta):
                         bot.tree.remove_command(command.name)
                     else:
                         for guild_id in guild_ids:
-                            bot.tree.remove_command(command.name, guild=discord.Object(id=guild_id))
+                            bot.tree.remove_command(command.name, guild=Object(id=guild_id))
 
             for name, method_name in self.__cog_listeners__:
                 bot.remove_listener(getattr(self, method_name), name)

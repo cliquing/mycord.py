@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Generic, Literal, Optional, TypeVar, Union, overload
 from .errors import TranslationError
-from ..enums import Enum, Locale
+from ..utils.enums import Enum, Locale
 
 
 if TYPE_CHECKING:

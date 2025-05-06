@@ -6,12 +6,12 @@ from ....utils.snowflake import Snowflake
 from ...user.types import UserPayload
 
 
-class BaseSoundboardSound(TypedDict):
+class BaseSoundboardSoundPayload(TypedDict):
     sound_id: Union[Snowflake, str]  # basic string number when it's a default sound
     volume: float
 
 
-class SoundboardSoundPayload(BaseSoundboardSound):
+class SoundboardSoundPayload(BaseSoundboardSoundPayload):
     name: str
     emoji_name: Optional[str]
     emoji_id: Optional[Snowflake]
@@ -21,6 +21,6 @@ class SoundboardSoundPayload(BaseSoundboardSound):
     user: NotRequired[UserPayload]
 
 
-class SoundboardDefaultSound(BaseSoundboardSound):
+class SoundboardDefaultSoundPayload(BaseSoundboardSoundPayload):
     name: str
     emoji_name: str

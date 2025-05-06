@@ -7,11 +7,11 @@ from ..scheduled_event.types import GuildScheduledEvent
 from ....utils.snowflake import Snowflake
 from ..types import InviteGuildPayload, _GuildPreviewUnique
 from ..channel.types import PartialChannelPayload
-from ...user.types import PartialUserPayload
+from ...user.types import PartialUserPayload, UserPayload
 from ...appinfo.types import PartialAppInfoPayload
 
 InviteTargetType = Literal[1, 2]
-InviteType = Literal[0, 1, 2]
+InviteTypes = Literal[0, 1, 2]
 
 
 class _InviteMetadata(TypedDict, total=False):
@@ -23,7 +23,7 @@ class _InviteMetadata(TypedDict, total=False):
     expires_at: Optional[str]
 
 
-class VanityInvite(_InviteMetadata):
+class VanityInvitePayload(_InviteMetadata):
     code: Optional[str]
     revoked: NotRequired[bool]
 
@@ -40,7 +40,7 @@ class InvitePayload(IncompleteInvite, total=False):
     target_type: InviteTargetType
     target_application: PartialAppInfoPayload
     guild_scheduled_event: GuildScheduledEvent
-    type: InviteType
+    type: InviteTypes
 
 
 class InviteWithCounts(InvitePayload, _GuildPreviewUnique):
@@ -69,3 +69,26 @@ class GatewayInviteDelete(TypedDict):
 
 
 GatewayInvitePayload = Union[GatewayInviteCreate, GatewayInviteDelete]
+
+
+class InviteCreateEvent(TypedDict):
+    channel_id: Snowflake
+    code: str
+    created_at: str
+    max_age: int
+    max_uses: int
+    temporary: bool
+    uses: Literal[0]
+    guild_id: NotRequired[Snowflake]
+    inviter: NotRequired[UserPayload]
+    target_type: NotRequired[InviteTargetType]
+    target_user: NotRequired[UserPayload]
+    target_application: NotRequired[PartialAppInfoPayload]
+
+
+class InviteDeleteEvent(TypedDict):
+    channel_id: Snowflake
+    code: str
+    guild_id: NotRequired[Snowflake]
+
+

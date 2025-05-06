@@ -57,11 +57,11 @@ from .models import Choice
 from .transformers import annotation_to_parameter, CommandParameter, NoneType
 from .errors import AppCommandError, CheckFailure, CommandInvokeError, CommandSignatureMismatch, CommandAlreadyRegistered
 from .translator import TranslationContextLocation, TranslationContext, Translator, locale_str
-from ..core.message.message import Message
+from ..core.message.messages import Message
 from ..core.user.user import User
 from ..core.guild.member.member import Member
 from ..utils.permissions import Permissions
-from ..utils import resolve_annotation, MISSING, is_inside_class, maybe_coroutine, async_all, _shorten, _to_kebab_case
+from ..utils.utils import resolve_annotation, MISSING, is_inside_class, maybe_coroutine, async_all, _shorten, _to_kebab_case
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec, Concatenate
@@ -75,7 +75,7 @@ if TYPE_CHECKING:
     # Generally, these two libraries are supposed to be separate from each other.
     # However, for type hinting purposes it's unfortunately necessary for one to
     # reference the other to prevent type checking errors in callbacks
-    from discord.ext import commands
+    from ..ext import commands
 
     ErrorFunc = Callable[[Interaction, AppCommandError], Coroutine[Any, Any, None]]
 

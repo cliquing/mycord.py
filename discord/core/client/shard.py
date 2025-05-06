@@ -32,7 +32,7 @@ import yarl
 
 from ..state.state import AutoShardedConnectionState
 from .client import Client
-from ...other.backoff import ExponentialBackoff
+from ...utils.backoff import ExponentialBackoff
 from ..gateway.gateway import *
 from ...errors import (
     ClientException,
@@ -42,7 +42,7 @@ from ...errors import (
     PrivilegedIntentsRequired,
 )
 
-from .enums import Status
+from .enums import StatusType
 
 from typing import TYPE_CHECKING, Any, Callable, Tuple, Type, Optional, List, Dict
 
@@ -51,7 +51,7 @@ if TYPE_CHECKING:
     from ..gateway.gateway import DiscordWebSocket
     from .activity import BaseActivity
     from ..gateway.flags import Intents
-    from ...types import SessionStartLimit
+    from ..gateway.types import SessionStartLimit
 
 __all__ = (
     'AutoShardedClient',
@@ -557,7 +557,7 @@ class AutoShardedClient(Client):
         self,
         *,
         activity: Optional[BaseActivity] = None,
-        status: Optional[Status] = None,
+        status: Optional[StatusType] = None,
         shard_id: Optional[int] = None,
     ) -> None:
         """|coro|
@@ -596,10 +596,10 @@ class AutoShardedClient(Client):
 
         if status is None:
             status_value = 'online'
-            status_enum = Status.online
-        elif status is Status.offline:
+            status_enum = StatusType.online
+        elif status is StatusType.offline:
             status_value = 'invisible'
-            status_enum = Status.offline
+            status_enum = StatusType.offline
         else:
             status_enum = status
             status_value = str(status)

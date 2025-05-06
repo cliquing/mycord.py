@@ -1,5 +1,5 @@
 
-from ....utils.flags import BaseFlags, fill_with_flags, flag_value, alias_flag_value
+from ....utils.flags import BaseFlags, fill_with_flags, flag_value
 
 @fill_with_flags()
 class SKUFlags(BaseFlags):

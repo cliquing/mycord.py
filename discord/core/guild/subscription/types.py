@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import List, Literal, Optional, TypedDict
-
-
 from ....utils.snowflake import Snowflake
 
 SubscriptionStatus = Literal[0, 1, 2]
@@ -17,3 +15,14 @@ class SubscriptionPayload(TypedDict):
     status: SubscriptionStatus
     canceled_at: Optional[str]
     renewal_sku_ids: Optional[List[Snowflake]]
+
+
+SubscriptionCreateEvent = SubscriptionUpdateEvent = SubscriptionDeleteEvent = SubscriptionPayload
+
+__all__ = (
+    'SubscriptionPayload',
+    'SubscriptionStatus',
+    'SubscriptionCreateEvent',
+    'SubscriptionUpdateEvent',
+    'SubscriptionDeleteEvent',
+)

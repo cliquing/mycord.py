@@ -37,12 +37,9 @@ __all__ = (
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from .types import (
-        WelcomeScreen as WelcomeScreenPayload,
-        WelcomeScreenChannel as WelcomeScreenChannelPayload,
-    )
+    from .types import WelcomeScreenPayload, WelcomeScreenChannelPayload
     from ....abc import Snowflake
-    from ..guild import Guild
+    from ..guilds import Guild
     from ...emoji.emoji import Emoji, PartialEmoji
 
 

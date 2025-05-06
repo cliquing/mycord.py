@@ -29,20 +29,20 @@ from typing_extensions import NotRequired
 
 from ..guild.channel.types import ChannelTypeWithoutThread, GuildChannelPayload, InteractionDMChannelPayload, GroupDMChannelPayload
 from ..guild.threads.types import ThreadMetadata
-from ...other.sku import Entitlement
+from ..client.sku import EntitlementPayload
 from ..guild.threads import ThreadType
-from ..guild.member import Member
-from ..message import Attachment
-from ..guild.role import Role
+from ..guild.member import MemberPayload
+from ..message import AttachmentPayload
+from ..guild.role import RolePayload
 from ...utils.snowflake import Snowflake
-from ..user import User
-from ..guild import GuildFeature
+from ..user import UserPayload
+from ..guild import GuildFeatures
 
 if TYPE_CHECKING:
-    from ..message import Message
+    from ..message import MessagePayload
 
 
-InteractionType = Literal[1, 2, 3, 4, 5]
+InteractionTypes = Literal[1, 2, 3, 4, 5]
 InteractionResponseType = Literal[
     1,
     4,
@@ -63,29 +63,29 @@ class _BasePartialChannel(TypedDict):
     permissions: str
 
 
-class PartialChannel(_BasePartialChannel):
+class PartialInteractionChannelPayload(_BasePartialChannel):
     type: ChannelTypeWithoutThread
 
 
-class PartialThread(_BasePartialChannel):
+class PartialThreadPayload(_BasePartialChannel):
     type: ThreadType
     thread_metadata: ThreadMetadata
     parent_id: Snowflake
 
 
 class ResolvedData(TypedDict, total=False):
-    users: Dict[str, User]
-    members: Dict[str, Member]
-    roles: Dict[str, Role]
-    channels: Dict[str, Union[PartialChannel, PartialThread]]
-    messages: Dict[str, Message]
-    attachments: Dict[str, Attachment]
+    users: Dict[str, UserPayload]
+    members: Dict[str, MemberPayload]
+    roles: Dict[str, RolePayload]
+    channels: Dict[str, Union[PartialInteractionChannelPayload, PartialThreadPayload]]
+    messages: Dict[str, MessagePayload]
+    attachments: Dict[str, AttachmentPayload]
 
 
 class PartialInteractionGuild(TypedDict):
     id: Snowflake
     locale: str
-    features: List[GuildFeature]
+    features: List[GuildFeatures]
 
 
 class _BaseApplicationCommandInteractionDataOption(TypedDict):
@@ -223,7 +223,7 @@ class _BaseInteraction(TypedDict):
     locale: NotRequired[str]
     guild_locale: NotRequired[str]
     entitlement_sku_ids: NotRequired[List[Snowflake]]
-    entitlements: NotRequired[List[Entitlement]]
+    entitlements: NotRequired[List[EntitlementPayload]]
     authorizing_integration_owners: Dict[Literal['0', '1'], Snowflake]
     context: NotRequired[InteractionContextType]
 
@@ -251,15 +251,15 @@ class ModalSubmitInteraction(_BaseInteraction):
 
 class MessageInteractionPayload(TypedDict):
     id: Snowflake
-    type: InteractionType
+    type: InteractionTypes
     name: str
-    user: User
-    member: NotRequired[Member]
+    user: UserPayload
+    member: NotRequired[MemberPayload]
 
 
 class _MessageInteractionMetadata(TypedDict):
     id: Snowflake
-    user: User
+    user: UserPayload
     authorizing_integration_owners: Dict[Literal['0', '1'], Snowflake]
     original_response_message_id: NotRequired[Snowflake]
 
@@ -271,7 +271,7 @@ class _ApplicationCommandMessageInteractionMetadata(_MessageInteractionMetadata)
 
 class UserApplicationCommandMessageInteractionMetadata(_ApplicationCommandMessageInteractionMetadata):
     # command_type: Literal[2]
-    target_user: User
+    target_user: UserPayload
 
 
 class MessageApplicationCommandMessageInteractionMetadata(_ApplicationCommandMessageInteractionMetadata):
@@ -305,9 +305,9 @@ MessageInteractionMetadata = Union[
 ]
 
 
-class InteractionCallbackResponse(TypedDict):
+class InteractionCallbackResponsePayload(TypedDict):
     id: Snowflake
-    type: InteractionType
+    type: InteractionTypes
     activity_instance_id: NotRequired[str]
     response_message_id: NotRequired[Snowflake]
     response_message_loading: NotRequired[bool]
@@ -321,14 +321,14 @@ class InteractionCallbackActivityPayload(TypedDict):
 class InteractionCallbackResource(TypedDict):
     type: InteractionResponseType
     activity_instance: NotRequired[InteractionCallbackActivityPayload]
-    message: NotRequired[Message]
+    message: NotRequired[MessagePayload]
 
 
 class InteractionCallbackPayload(TypedDict):
-    interaction: InteractionCallbackResponse
+    interaction: InteractionCallbackResponsePayload
     resource: NotRequired[InteractionCallbackResource]
 
 
-Interaction = Union[PingInteraction, ApplicationCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction]
+InteractionPayload = Union[PingInteraction, ApplicationCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction]
 
-InteractionCreateEvent = Interaction
+InteractionCreateEvent = InteractionPayload
